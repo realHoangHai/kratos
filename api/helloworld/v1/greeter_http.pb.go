@@ -4,7 +4,7 @@
 // - protoc             v4.25.1
 // source: helloworld/v1/greeter.proto
 
-package v1
+package helloworldv1
 
 import (
 	context "context"

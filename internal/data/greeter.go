@@ -21,11 +21,11 @@ func NewGreeterRepo(data *Data, logger log.Logger) biz.GreeterRepo {
 	}
 }
 
-func (r *greeterRepo) Save(ctx context.Context, g *biz.Greeter) (*biz.Greeter, error) {
+func (r *greeterRepo) Save(_ context.Context, g *biz.Greeter) (*biz.Greeter, error) {
 	return g, nil
 }
 
-func (r *greeterRepo) Update(ctx context.Context, g *biz.Greeter) (*biz.Greeter, error) {
+func (r *greeterRepo) Update(_ context.Context, g *biz.Greeter) (*biz.Greeter, error) {
 	return g, nil
 }
 

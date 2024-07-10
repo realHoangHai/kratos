@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package common.v1;
+
+import "errors/errors.proto";
+
+option go_package = "github.com/realHoangHai/kratos/api/common/v1;commonv1";
+
+enum ErrorReason {
+  // Set default error code.
+  option (errors.default_code) = 500;
+
+  // Set the error code separately for an enumeration.
+  USER_NOT_FOUND = 0 [(errors.code) = 404];
+
+  CONTENT_MISSING = 1 [(errors.code) = 400];
+}
