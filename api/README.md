@@ -49,11 +49,6 @@ With this file in place, you can generate your files using `buf generate`.
 > [the official documentation](https://docs.buf.build/generate-usage).
 
 Note: Just remember choose right version, I'm using buf v2 currently.
-And you can shorthand the name of local tools without `protoc-gen`, for example:
-- `go` is shorthand form of `protoc-gen-go` 
-- `go-grpc` is shorthand form of `protoc-gen-go-grpc` 
-- `go-http` is shorthand form of `protoc-gen-go-http`
-- ...
 
 See [buf.local.yaml](buf.local.yaml) and [here](https://buf.build/docs/generate/overview#generating-with-local-plugins).
 
