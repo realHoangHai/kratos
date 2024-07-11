@@ -1,6 +1,13 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
+CURRENT_DIR:=$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+ROOT_DIR:=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+SRCS_MK:=$(foreach dir, app, $(wildcard $(dir)/*/*/Makefile))
+
+ifeq ($(OS),Windows_NT)
+    IS_WINDOWS:=1
+endif
 
 ifeq ($(GOHOSTOS), windows)
 	#the `find.exe` is different from `find` in bash/shell.
@@ -17,16 +24,28 @@ else
 	API_GO_FILES=$(shell find api -name *.go)
 endif
 
+
+
+
+
+
+
+
 .PHONY: init
 # init env
 init:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	go install github.com/google/gnostic@latest
 	go install github.com/go-kratos/kratos/cmd/kratos/v2@latest
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-http/v2@latest
 	go install github.com/go-kratos/kratos/cmd/protoc-gen-go-errors/v2@latest
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
 	go install github.com/google/gnostic/cmd/protoc-gen-openapi@latest
+	go install github.com/envoyproxy/protoc-gen-validate@latest
+	go install github.com/bufbuild/buf/cmd/buf@latest
 	go install github.com/google/wire/cmd/wire@latest
+	go install entgo.io/ent/cmd/ent@latest
 
 .PHONY: config
 # generate internal proto
@@ -48,13 +67,48 @@ api:
 	       --openapi_out=fq_schema_naming=true,default_response=false:. \
 	       $(API_PROTO_FILES)
 
-rm_api:
-	rm -rf $(API_GO_FILES)
+# adding proto files
+kratos.add:
+	kratos proto add api/helloworld/demo.proto
+
+# generate proto codes
+kratos.client:
+	kratos proto client api/helloworld/demo.proto
+
+# generate service codes
+kratos.server:
+	kratos proto server api/helloworld/demo.proto -t internal/service
 
 .PHONY: build
 # build
 build:
 	mkdir -p bin/ && go build -ldflags "-X main.Version=$(VERSION)" -o ./bin/ ./...
+
+.PHONY: buf buf.update
+# buf
+buf:
+	rm -rf api/gen/ && \
+	cd api && \
+	buf generate
+
+buf.update:
+	cd api && \
+	buf dep update
+
+buf.lint:
+	cd api && \
+	buf lint
+
+.PHONY: ent
+# ent
+ent:
+	go run -mod=mod entgo.io/ent/cmd/ent generate --feature sql/modifier ./internal/data/ent/schema
+
+.PHONY: wire
+# wire
+wire:
+	cd cmd/kratos && \
+	wire
 
 .PHONY: generate
 # generate

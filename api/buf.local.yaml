@@ -1,0 +1,31 @@
+version: v2
+managed:
+  enabled: true
+  disable:
+    - module: buf.build/googleapis/googleapis
+    - module: buf.build/gnostic/gnostic
+    - module: buf.build/kratos/apis
+
+  override:
+    - file_option: go_package_prefix
+      value: github.com/realHoangHai/kratos/api/gen/go
+plugins:
+  # using protoc-gen-go-http
+  - local: protoc-gen-go-http
+    out: gen/go
+    opt: paths=source_relative
+  - local: protoc-gen-validate
+    out: gen/go
+    opt:
+      - paths=source_relative
+      - lang=go
+  # using protoc-gen-go-grpc
+  - local: protoc-gen-go-grpc
+    out: gen/go
+    opt: paths=source_relative
+  # using protoc-gen-go
+  - local: protoc-gen-go
+    out: gen/go
+    opt: paths=source_relative
+inputs:
+  - directory: proto

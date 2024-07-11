@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "google/api/annotations.proto";
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "common/v1/common.proto";
+
+option go_package = "github.com/realHoangHai/kratos/api/gen/go/user/v1;userv1";
+
+// The user service definition.
+service UserService {
+  // List of users
+  rpc ListUser (common.v1.PagingRequest) returns (ListUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/users"
+    };
+  }
+
+  // Get user detail
+  rpc GetUser (GetUserRequest) returns (User) {}
+
+  // Create user
+  rpc CreateUser (CreateUserRequest) returns (User) {}
+
+  // Update user
+  rpc UpdateUser (UpdateUserRequest) returns (User) {}
+
+  // Delete user
+  rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {}
+
+  // Verify password
+  rpc VerifyPassword (VerifyPasswordRequest) returns (VerifyPasswordResponse) {}
+
+  // Check user exists
+  rpc UserExists (UserExistsRequest) returns (UserExistsResponse) {}
+}
+
+// Verify password result code
+enum VerifyPasswordResult {
+  SUCCESS = 0;
+  ACCOUNT_NOT_EXISTS = 1;
+  WRONG_PASSWORD = 2;
+  FREEZE = 3;
+  DELETED = 4;
+}
+
+// User rights
+enum UserAuthority {
+  SYS_ADMIN = 0;
+  CUSTOMER_USER = 1;
+  GUEST_USER = 2;
+}
+
+// User
+message User {
+  uint32 id = 1;
+  optional string user_name = 2;
+  optional string email = 3;
+  optional string avatar = 4;
+  optional string description = 5;
+  optional string password = 6;
+  optional string create_time = 7;
+  optional string update_time = 8;
+  optional string status = 9 [(gnostic.openapi.v3.property) = {
+    description: "User status"
+    default: {string: "ON"}
+    enum: [{yaml: "ON"}, {yaml: "OFF"}]
+  }];
+  optional uint32 role_id = 10 [(gnostic.openapi.v3.property) = {description: "RoleID"}];
+  optional uint32 creator_id = 11 [(gnostic.openapi.v3.property) = {description: "CreatorID"}];
+
+  optional UserAuthority authority = 12 [(gnostic.openapi.v3.property) = {
+    description: "Permissions"
+    default: {string: "CUSTOMER_USER"}
+  }];
+}
+
+// List of users reply
+message ListUserResponse {
+  repeated User items = 1;
+  int32 total = 2;
+}
+
+message GetUserRequest {
+  uint32 id = 1;
+}
+
+
+message CreateUserRequest {
+  User user = 1;
+  uint32 operator_id = 2;
+}
+
+message UpdateUserRequest {
+  uint32 id = 1;
+  User user = 2;
+  uint32 operator_id = 3;
+}
+
+message DeleteUserRequest {
+  uint32 id = 1;
+  uint32 operator_id = 2;
+}
+
+
+message VerifyPasswordRequest {
+  string user_name = 1;
+  string password = 2;
+}
+
+message VerifyPasswordResponse {
+  VerifyPasswordResult result = 1;
+}
+
+
+message UserExistsRequest {
+  string user_name = 1;
+}
+
+message UserExistsResponse {
+  bool exist = 1;
+}

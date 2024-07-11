@@ -9,7 +9,7 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/realHoangHai/kratos/internal/biz"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/realHoangHai/kratos/internal/conf"
 	"github.com/realHoangHai/kratos/internal/data"
 	"github.com/realHoangHai/kratos/internal/server"
@@ -23,16 +23,17 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
+func wireApp(logger log.Logger, registrar registry.Registrar, bootstrap *conf.Bootstrap) (*kratos.App, func(), error) {
+	client := data.NewEntClient(bootstrap, logger)
+	redisClient := data.NewRedisClient(bootstrap, logger)
+	dataData, cleanup, err := data.NewData(client, redisClient, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
+	userRepo := data.NewUserRepo(dataData, logger)
+	userService := service.NewUserService(logger, userRepo)
+	grpcServer := server.NewGRPCServer(bootstrap, logger, userService)
+	httpServer := server.NewHTTPServer(bootstrap, logger, userService)
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {
 		cleanup()

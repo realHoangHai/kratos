@@ -2,6 +2,9 @@ package main
 
 import (
 	"flag"
+	"github.com/realHoangHai/kratos/pkg/logger"
+	"github.com/realHoangHai/kratos/pkg/registry"
+	"github.com/realHoangHai/kratos/pkg/tracer"
 	"os"
 
 	"github.com/realHoangHai/kratos/internal/conf"
@@ -9,8 +12,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/middleware/tracing"
+	kratoslog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
 
@@ -30,10 +32,10 @@ var (
 )
 
 func init() {
-	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
+	flag.StringVar(&flagconf, "conf", "configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger kratoslog.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -49,15 +51,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
+
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -76,14 +70,27 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, bc.Data, logger)
+	serviceInfo := conf.NewServiceInfo(Name, Version, id)
+
+	// init logger
+	ll := logger.NewLoggerProvider(bc.Logger, serviceInfo)
+
+	// init registrar
+	reg := registry.NewRegistry(bc.Registry)
+
+	// init tracer
+	if err := tracer.NewTracerProvider(bc.Trace, serviceInfo); err != nil {
+		panic(err)
+	}
+
+	app, cleanup, err := wireApp(ll, reg, &bc)
 	if err != nil {
 		panic(err)
 	}
 	defer cleanup()
 
 	// start and wait for stop signal
-	if err := app.Run(); err != nil {
+	if err = app.Run(); err != nil {
 		panic(err)
 	}
 }

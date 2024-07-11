@@ -6,18 +6,19 @@
 package main
 
 import (
-	"github.com/realHoangHai/kratos/internal/biz"
+	"github.com/google/wire"
+
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/registry"
+
 	"github.com/realHoangHai/kratos/internal/conf"
 	"github.com/realHoangHai/kratos/internal/data"
 	"github.com/realHoangHai/kratos/internal/server"
 	"github.com/realHoangHai/kratos/internal/service"
-
-	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
-	"github.com/google/wire"
 )
 
 // wireApp init kratos application.
-func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+func wireApp(log.Logger, registry.Registrar, *conf.Bootstrap) (*kratos.App, func(), error) {
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, service.ProviderSet, newApp))
 }

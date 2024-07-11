@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package common.v1;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/field_mask.proto";
+import "gnostic/openapi/v3/annotations.proto";
+
+option go_package = "github.com/realHoangHai/kratos/api/gen/go/common/v1;commonv1";
+
+option (gnostic.openapi.v3.document) = {
+  info: {
+    title: "Kratos API";
+    version: "1.0";
+    description: "Description of Kratos API";
+    contact: {
+      name: "realHoangHai";
+      url: "https://github.com/realHoangHai";
+      email: "aflyingpenguin2lth@gmail.com";
+    }
+    license: {
+      name: "MIT";
+      url: "https://github.com/realHoangHai/kratos/blob/main/LICENSE";
+    }
+  }
+  components: {
+    security_schemes: {
+      additional_properties: [
+        {
+          name: "BasicAuth";
+          value: {
+            security_scheme: {
+              type: "http";
+              scheme: "basic";
+            }
+          }
+        }
+      ]
+    }
+  }
+};
+
+// pagination common request
+message PagingRequest {
+  optional int32 page = 1 [(gnostic.openapi.v3.property) = {
+    description: "Current page number"
+    default: {number: 1}
+  }];
+
+  optional int32 page_size = 2 [(gnostic.openapi.v3.property) = {
+      description: "Number of rows per page",
+      default: {number: 10}
+  }];
+
+
+  optional string query = 3 [(gnostic.openapi.v3.property) = {
+      description: "With filter parameters",
+      example: {yaml: "{\"key1\":\"val1\",\"key2\":\"val2\"}"}
+  }];
+
+  optional string or_query = 4 [(gnostic.openapi.v3.property) = {
+      description: "Or filter parameters",
+      example: {yaml: "{\"key1\":\"val1\",\"key2\":\"val2\"}"}
+  }];
+
+  repeated string order_by = 5 [(gnostic.openapi.v3.property) = {
+      description: "Sorting conditions, add '-' before the field name for descending order, otherwise it will be ascending order."
+      example: {yaml: "{\"val1\", \"-val2\"}"}
+  }];
+
+
+  optional bool no_paging = 6 [(gnostic.openapi.v3.property) = {
+    description: "Whether to disable paging"
+  }];
+
+  google.protobuf.FieldMask field_mask = 7 [(gnostic.openapi.v3.property) = {
+      description: "Field mask, if empty selects all fields",
+      example: {yaml : "id, user_name"}
+  }];
+}
+
+// Paginated universal results
+message PagingResponse {
+  // total
+  int32 total = 1;
+
+  // paginated data
+  repeated google.protobuf.Any items = 2;
+}
