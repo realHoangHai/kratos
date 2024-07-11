@@ -7,7 +7,6 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/jackc/pgx/v4/stdlib"
 	_ "github.com/lib/pq"
 
 	"github.com/realHoangHai/kratos/internal/conf"

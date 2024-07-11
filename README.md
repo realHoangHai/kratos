@@ -5,7 +5,7 @@
 # Download and update dependencies
 make init
 # Generate API files (include: pb.go, http, grpc, validate, swagger) by proto file
-make api
+make buf
 # Generate all files
 make all
 ```

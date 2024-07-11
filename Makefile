@@ -120,8 +120,8 @@ generate:
 .PHONY: all
 # generate all
 all:
-	rm -rf $(API_GO_FILES)
 	make api;
+	make ent;
 	make config;
 	make generate;
 
