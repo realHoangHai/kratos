@@ -19,12 +19,15 @@ import (
 
 // CreateHttpServer create http server
 func CreateHttpServer(cfg *conf.Bootstrap, m ...middleware.Middleware) *kratosrest.Server {
-	var opts = []kratosrest.ServerOption{
-		kratosrest.Filter(handlers.CORS(
+	var opts []kratosrest.ServerOption
+
+	if cfg.Server.Http.Cors != nil {
+		corsOption := kratosrest.Filter(handlers.CORS(
 			handlers.AllowedHeaders(cfg.Server.Http.Cors.Headers),
 			handlers.AllowedMethods(cfg.Server.Http.Cors.Methods),
 			handlers.AllowedOrigins(cfg.Server.Http.Cors.Origins),
-		)),
+		))
+		opts = append(opts, corsOption)
 	}
 
 	var ms []middleware.Middleware

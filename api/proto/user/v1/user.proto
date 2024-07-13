@@ -23,10 +23,20 @@ service UserService {
   rpc GetUser (GetUserRequest) returns (User) {}
 
   // Create user
-  rpc CreateUser (CreateUserRequest) returns (User) {}
+  rpc CreateUser (CreateUserRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/users",
+      body: "*"
+    };
+  }
 
   // Update user
-  rpc UpdateUser (UpdateUserRequest) returns (User) {}
+  rpc UpdateUser (UpdateUserRequest) returns (User) {
+    option (google.api.http) = {
+      put: "/v1/users/{id}",
+      body: "*"
+    };
+  }
 
   // Delete user
   rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {}

@@ -10,7 +10,7 @@ server:
 data:
   database:
     driver: "postgres"
-    source: "host=localhost port=5432 user=postgres password=@Abcd123456 dbname=kratos sslmode=disable"
+    source: "host=localhost port=5432 user=postgres password=@Abcd123456 dbname=postgres sslmode=disable"
     migrate: true
     debug: false
     max_idle_connections: 25
