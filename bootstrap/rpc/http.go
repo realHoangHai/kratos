@@ -14,7 +14,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	kratosrest "github.com/go-kratos/kratos/v2/transport/http"
 
-	"github.com/realHoangHai/kratos/conf"
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 )
 
 // CreateHttpServer create http server

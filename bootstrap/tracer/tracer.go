@@ -15,7 +15,8 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 
-	"github.com/realHoangHai/kratos/conf"
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
+	"github.com/realHoangHai/kratos/bootstrap/config"
 )
 
 // NewTracerExporter create tracer exporter: zipkin, otlp-http, otlp-grpc
@@ -39,7 +40,7 @@ func NewTracerExporter(exporterName, endpoint string, insecure bool) (tracesdk.S
 }
 
 // NewTracerProvider create new tracer provider
-func NewTracerProvider(cfg *conf.Tracer, serviceInfo *conf.ServiceInfo) error {
+func NewTracerProvider(cfg *conf.Tracer, serviceInfo *config.ServiceInfo) error {
 	if cfg == nil {
 		return errors.New("tracer config is nil")
 	}

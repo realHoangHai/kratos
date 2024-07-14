@@ -12,10 +12,10 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 	"github.com/realHoangHai/kratos/app/core/internal/data"
 	"github.com/realHoangHai/kratos/app/core/internal/server"
 	"github.com/realHoangHai/kratos/app/core/internal/service"
-	"github.com/realHoangHai/kratos/conf"
 )
 
 // wireApp init kratos application.

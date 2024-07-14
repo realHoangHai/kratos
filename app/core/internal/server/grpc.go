@@ -4,11 +4,11 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	
+
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 	userv1 "github.com/realHoangHai/kratos/api/gen/go/user/v1"
 	"github.com/realHoangHai/kratos/app/core/internal/service"
 	"github.com/realHoangHai/kratos/bootstrap/rpc"
-	"github.com/realHoangHai/kratos/conf"
 )
 
 // NewGRPCServer new a gRPC server.

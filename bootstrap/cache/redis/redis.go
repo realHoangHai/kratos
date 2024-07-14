@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
-	"github.com/realHoangHai/kratos/conf"
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 )
 
 // NewClient create go-redis client

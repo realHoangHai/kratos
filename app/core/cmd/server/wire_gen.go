@@ -10,14 +10,10 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 	"github.com/realHoangHai/kratos/app/core/internal/data"
 	"github.com/realHoangHai/kratos/app/core/internal/server"
 	"github.com/realHoangHai/kratos/app/core/internal/service"
-	"github.com/realHoangHai/kratos/conf"
-)
-
-import (
-	_ "go.uber.org/automaxprocs"
 )
 
 // Injectors from wire.go:
@@ -33,7 +29,7 @@ func wireApp(logger log.Logger, registrar registry.Registrar, bootstrap *conf.Bo
 	userRepo := data.NewUserRepo(dataData, logger)
 	userService := service.NewUserService(logger, userRepo)
 	grpcServer := server.NewGRPCServer(bootstrap, logger, userService)
-	app := newApp(logger, grpcServer)
+	app := newApp(logger, registrar, grpcServer)
 	return app, func() {
 		cleanup()
 	}, nil

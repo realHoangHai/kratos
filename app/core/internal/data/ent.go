@@ -8,9 +8,9 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 	"github.com/realHoangHai/kratos/app/core/internal/data/ent"
 	"github.com/realHoangHai/kratos/app/core/internal/data/ent/migrate"
-	"github.com/realHoangHai/kratos/conf"
 	"github.com/realHoangHai/kratos/pkg/utils/entgo"
 )
 

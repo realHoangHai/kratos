@@ -3,8 +3,8 @@ package registry
 import (
 	"github.com/go-kratos/kratos/v2/registry"
 
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 	"github.com/realHoangHai/kratos/bootstrap/registry/zookeeper"
-	"github.com/realHoangHai/kratos/conf"
 )
 
 type Type string

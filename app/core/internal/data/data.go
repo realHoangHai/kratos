@@ -2,6 +2,7 @@ package data
 
 import (
 	"github.com/google/wire"
+
 	"github.com/redis/go-redis/v9"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -9,9 +10,9 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 	"github.com/realHoangHai/kratos/app/core/internal/data/ent"
 	rdb "github.com/realHoangHai/kratos/bootstrap/cache/redis"
-	"github.com/realHoangHai/kratos/conf"
 	"github.com/realHoangHai/kratos/pkg/utils/entgo"
 )
 

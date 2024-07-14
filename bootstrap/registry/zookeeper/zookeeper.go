@@ -6,7 +6,7 @@ import (
 	kratoszookeeper "github.com/go-kratos/kratos/contrib/registry/zookeeper/v2"
 	"github.com/go-kratos/kratos/v2/log"
 
-	"github.com/realHoangHai/kratos/conf"
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 )
 
 // NewRegistry create new registry - ZooKeeper

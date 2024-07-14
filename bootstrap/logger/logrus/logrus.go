@@ -6,7 +6,7 @@ import (
 	kratoslogrus "github.com/go-kratos/kratos/contrib/log/logrus/v2"
 	"github.com/go-kratos/kratos/v2/log"
 
-	"github.com/realHoangHai/kratos/conf"
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
 )
 
 // NewLogger create new logger - Logrus

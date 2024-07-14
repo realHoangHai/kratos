@@ -6,9 +6,10 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 
+	"github.com/realHoangHai/kratos/api/gen/go/conf"
+	"github.com/realHoangHai/kratos/bootstrap/config"
 	"github.com/realHoangHai/kratos/bootstrap/logger/logrus"
 	"github.com/realHoangHai/kratos/bootstrap/logger/zap"
-	"github.com/realHoangHai/kratos/conf"
 )
 
 type Type string
@@ -38,7 +39,7 @@ func NewLogger(cfg *conf.Logger) log.Logger {
 }
 
 // NewLoggerProvider create new logger provider
-func NewLoggerProvider(cfg *conf.Logger, serviceInfo *conf.ServiceInfo) log.Logger {
+func NewLoggerProvider(cfg *conf.Logger, serviceInfo *config.ServiceInfo) log.Logger {
 	l := NewLogger(cfg)
 
 	return log.With(
