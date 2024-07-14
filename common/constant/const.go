@@ -1,7 +1,7 @@
 package constant
 
 const (
-	AdminService    = "kratos.admin.service"
-	CoreService     = "kratos.core.service"     // core service
-	FrontendService = "kratos.frontend.service" // front service
+	AdminService  = "kratos.admin.service"
+	CoreService   = "kratos.core.service"   // core service
+	ClientService = "kratos.client.service" // client service
 )

@@ -5,7 +5,7 @@ package client.v1;
 
 import "errors/errors.proto";
 
-enum FrontErrorReason {
+enum ClientErrorReason {
   option (errors.default_code) = 500;
 
   BAD_REQUEST = 0 [(errors.code) = 400];// 400

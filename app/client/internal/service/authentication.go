@@ -23,7 +23,7 @@ type AuthenticationService struct {
 }
 
 func NewAuthenticationService(logger log.Logger, sc userv1.UserServiceClient, utuc *cache.UserToken) *AuthenticationService {
-	l := log.NewHelper(log.With(logger, "module", "frontend/service/authentication"))
+	l := log.NewHelper(log.With(logger, "module", "client/service/authentication"))
 	return &AuthenticationService{
 		log:  l,
 		sc:   sc,

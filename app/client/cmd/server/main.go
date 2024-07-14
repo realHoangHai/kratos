@@ -20,5 +20,5 @@ func newApp(ll log.Logger, rr registry.Registrar, hs *http.Server) *kratos.App {
 }
 
 func main() {
-	bootstrap.Bootstrap(wireApp, trans.Ptr(constant.FrontendService), trans.Ptr(version))
+	bootstrap.Bootstrap(wireApp, trans.Ptr(constant.ClientService), trans.Ptr(version))
 }

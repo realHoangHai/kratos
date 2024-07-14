@@ -52,7 +52,7 @@ func NewData(rdb *redis.Client,
 	authorizer authz.Engine,
 	logger log.Logger,
 ) (*Data, func(), error) {
-	l := log.NewHelper(log.With(logger, "module", "frontend/data"))
+	l := log.NewHelper(log.With(logger, "module", "client/data"))
 
 	d := &Data{
 		rdb:           rdb,
