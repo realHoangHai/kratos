@@ -14,11 +14,11 @@ info:
         url: https://github.com/realHoangHai/kratos/blob/main/LICENSE
     version: "1.0"
 paths:
-    /v1/users:
+    /admin/v1/users:
         get:
             tags:
                 - UserService
-            description: List of users
+            description: List of users for admin
             operationId: UserService_ListUser
             parameters:
                 - name: page
@@ -72,11 +72,17 @@ paths:
                 - UserService
             description: Create user
             operationId: UserService_CreateUser
+            parameters:
+                - name: operatorId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CreateUserRequest'
+                            $ref: '#/components/schemas/User'
                 required: true
             responses:
                 "200":
@@ -91,11 +97,36 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /v1/users/{id}:
+    /admin/v1/users/{id}:
+        get:
+            tags:
+                - UserService
+            description: Get user detail for admin
+            operationId: UserService_GetUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
         put:
             tags:
                 - UserService
-            description: Update user
+            description: Update user for admin
             operationId: UserService_UpdateUser
             parameters:
                 - name: id
@@ -104,12 +135,118 @@ paths:
                   schema:
                     type: integer
                     format: uint32
+                - name: operatorId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/UpdateUserRequest'
+                            $ref: '#/components/schemas/User'
                 required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - UserService
+            description: Delete user for admin
+            operationId: UserService_DeleteUser
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: operatorId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/login:
+        post:
+            tags:
+                - AuthenticationService
+            description: APP Login
+            operationId: AuthenticationService_Login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginResponse'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+            security:
+                - {}
+    /v1/logout:
+        post:
+            tags:
+                - AuthenticationService
+            description: APP Logout
+            operationId: AuthenticationService_Logout
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LogoutRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /v1/me:
+        get:
+            tags:
+                - AuthenticationService
+            description: APP Get the data of logged in user
+            operationId: AuthenticationService_GetMe
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
             responses:
                 "200":
                     description: OK
@@ -125,14 +262,6 @@ paths:
                                 $ref: '#/components/schemas/Status'
 components:
     schemas:
-        CreateUserRequest:
-            type: object
-            properties:
-                user:
-                    $ref: '#/components/schemas/User'
-                operatorId:
-                    type: integer
-                    format: uint32
         GoogleProtobufAny:
             type: object
             properties:
@@ -152,6 +281,60 @@ components:
                     type: integer
                     format: int32
             description: List of users reply
+        LoginRequest:
+            required:
+                - user_name
+                - password
+                - grant_type
+            type: object
+            properties:
+                user_name:
+                    type: string
+                password:
+                    type: string
+                grant_type:
+                    type: string
+                    default: password
+                    description: Authorization type, the value here is fixed to "password", required.
+                scope:
+                    type: string
+                client_id:
+                    type: string
+                    description: The application's identification ID
+                client_secret:
+                    type: string
+                    description: Application password
+            description: User background login - request
+        LoginResponse:
+            required:
+                - access_token
+                - refresh_token
+            type: object
+            properties:
+                access_token:
+                    type: string
+                    description: Access token, required. The access token string issued by the authorization server.
+                refresh_token:
+                    type: string
+                    description: Refresh token, used to obtain the next access token, optional. If the access token is about to expire, it is useful to return a refresh token that the application can use to obtain another access token. However, refresh tokens cannot be issued for tokens issued through implicit grants.
+                token_type:
+                    type: string
+                    default: Bearer
+                    description: The type of token. This value is case-insensitive and required. It can be bearer type or mac type. It is usually just the string "Bearer".
+                expires_in:
+                    type: string
+                    description: The token validity time, in seconds. If the access token expires, the server should reply with the duration of the access token granted. If this parameter is omitted, the expiration time must be set in other ways.
+                scope:
+                    type: string
+                    description: A space-separated list of user grant scopes. If not provided, scope grants any scope, defaults to an empty list.
+            description: User background login - response
+        LogoutRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+            description: User background logout - request
         Status:
             type: object
             properties:
@@ -168,17 +351,6 @@ components:
                         $ref: '#/components/schemas/GoogleProtobufAny'
                     description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
             description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
-        UpdateUserRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                user:
-                    $ref: '#/components/schemas/User'
-                operatorId:
-                    type: integer
-                    format: uint32
         User:
             type: object
             properties:
@@ -225,4 +397,7 @@ components:
             type: http
             scheme: basic
 tags:
+    - name: AuthenticationService
+      description: The authentication service definition for user APP.
     - name: UserService
+      description: The user service definition.

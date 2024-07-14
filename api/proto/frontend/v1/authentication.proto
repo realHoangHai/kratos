@@ -1,0 +1,211 @@
+syntax = "proto3";
+
+package front.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+
+import "user/v1/user.proto";
+
+// The authentication service definition for user APP.
+service AuthenticationService {
+  // APP Login
+  rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/login"
+      body: "*"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+
+  // APP Logout
+  rpc Logout (LogoutRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/logout"
+      body: "*"
+    };
+  }
+
+  // APP Get the data of logged in user
+  rpc GetMe (GetMeRequest) returns (user.v1.User) {
+    option (google.api.http) = {
+      get: "/v1/me"
+    };
+  }
+}
+
+// User background logout - request
+message LogoutRequest {
+  uint32 id = 1;
+}
+
+// Get current user information - request
+message GetMeRequest {
+  uint32 id = 1;
+}
+
+// Authorization type
+enum GrantType {
+  password = 0; // Password Mode (Resource Owner Password Credentials Grant)
+  client_credentials = 1; // Client Credentials Grant
+  refresh_token = 2;  // Refresh Token
+}
+
+// Token type
+enum TokenType {
+  bearer = 0; //
+  mac = 1; //
+}
+
+// User background login - request
+message LoginRequest {
+  string user_name = 1 [
+    json_name = "user_name",
+    (google.api.field_behavior) = REQUIRED
+  ]; // Username, required.
+
+  string password = 2 [
+    json_name = "password",
+    (google.api.field_behavior) = REQUIRED
+  ]; // User's password, required.
+
+  string grant_type = 3 [
+    json_name = "grant_type",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "Authorization type, the value here is fixed to \"password\", required.",
+      default: {string: "password"}
+    }
+  ]; // Authorization type, the value here is fixed to "password", required.
+
+  optional string scope = 4 [
+    json_name = "scope",
+    (google.api.field_behavior) = OPTIONAL
+  ]; // A space-separated list of ranges. If not provided, scope authorizes any scope, defaulting to an empty list.
+
+  optional string client_id = 5 [
+    json_name = "client_id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "The application's identification ID"
+    }
+  ];
+  optional string client_secret = 6 [
+    json_name = "client_secret",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "Application password"
+    }
+  ];
+}
+
+// User background login - response
+message LoginResponse {
+  string access_token = 1 [
+    json_name = "access_token",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "Access token, required. The access token string issued by the authorization server."
+    }
+  ]; // Access token, required.
+
+  string refresh_token = 2 [
+    json_name = "refresh_token",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "Refresh token, used to obtain the next access token, optional. If the access token is about to expire, it is useful to return a refresh token that the application can use to obtain another access token. However, refresh tokens cannot be issued for tokens issued through implicit grants."
+    }
+  ]; // Refresh token, used to obtain the next access token, optional.
+
+  string token_type = 3 [
+    json_name = "token_type",
+    (gnostic.openapi.v3.property) = {
+      description: "The type of token. This value is case-insensitive and required. It can be bearer type or mac type. It is usually just the string \"Bearer\".",
+      default: {string: "Bearer"}
+    }
+  ]; // Token type, this value is case-insensitive, required, and can be bearer type or mac type.
+
+  optional int64 expires_in = 4 [
+    json_name = "expires_in",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "The token validity time, in seconds. If the access token expires, the server should reply with the duration of the access token granted. If this parameter is omitted, the expiration time must be set in other ways."
+    }
+  ]; // Token validity time, unit is seconds. If the access token expires, the server should reply with the duration of the access token granted. If this parameter is omitted, the expiration time must be set in other ways.
+
+  optional string scope = 5 [
+    json_name = "scope",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "A space-separated list of user grant scopes. If not provided, scope grants any scope, defaults to an empty list."
+    }
+  ]; // A space-separated list of user grant scopes. If not provided, scope authorizes any scope, defaulting to an empty list.
+}
+
+// User refresh token - request
+message RefreshTokenRequest {
+  string refresh_token = 1 [
+    json_name = "refresh_token",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "Refresh token, used to obtain the next access token, optional. If the access token is about to expire, it is useful to return a refresh token that the application can use to obtain another access token. However, refresh tokens cannot be issued for tokens issued through implicit grants."
+    }
+  ]; // Refresh token, used to obtain the next access token, required.
+
+  string grant_type = 2 [
+    json_name = "grant_type",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "Authorization type, the value here is fixed to \"refresh_token\", required.",
+      default: {string: "refresh_token"}
+    }
+  ]; // Authorization type, the value here is fixed to "refresh_token", required.
+
+  optional string scope = 3 [
+    json_name = "scope",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "A space-separated list of user grant scopes. If not provided, scope authorizes any scope, defaulting to an empty list."
+    }
+  ]; // A space-separated list of ranges. If not provided, scope authorizes any scope, defaulting to an empty list.
+
+  optional string client_id = 5 [
+    json_name = "client_id",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "The application's identification ID"
+    }
+  ];
+  optional string client_secret = 6 [
+    json_name = "client_secret",
+    (google.api.field_behavior) = OPTIONAL,
+    (gnostic.openapi.v3.property) = {
+      description: "Application password"
+    }
+  ];
+}
+
+// User refresh token - response
+message RefreshTokenResponse {
+  string refresh_token = 1 [
+    json_name = "refresh_token",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "Refresh token, used to obtain the next access token, optional. If the access token is about to expire, it is useful to return a refresh token that the application can use to obtain another access token. However, refresh tokens cannot be issued for tokens issued through implicit grants."
+    }
+  ]; // Refresh token, used to obtain the next access token, optional.
+
+  string grant_type = 2 [
+    json_name = "grant_type",
+    (google.api.field_behavior) = REQUIRED,
+    (gnostic.openapi.v3.property) = {
+      description: "Authorization type, the value here is fixed to \"refresh_token\", required.",
+      default: {string: "refresh_token"}
+    }
+  ]; // Authorization type, the value here is fixed to "refresh token", required.
+}

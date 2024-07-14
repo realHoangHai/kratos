@@ -21,13 +21,14 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	UserService_ListUser_FullMethodName       = "/user.v1.UserService/ListUser"
-	UserService_GetUser_FullMethodName        = "/user.v1.UserService/GetUser"
-	UserService_CreateUser_FullMethodName     = "/user.v1.UserService/CreateUser"
-	UserService_UpdateUser_FullMethodName     = "/user.v1.UserService/UpdateUser"
-	UserService_DeleteUser_FullMethodName     = "/user.v1.UserService/DeleteUser"
-	UserService_VerifyPassword_FullMethodName = "/user.v1.UserService/VerifyPassword"
-	UserService_UserExists_FullMethodName     = "/user.v1.UserService/UserExists"
+	UserService_ListUser_FullMethodName          = "/user.v1.UserService/ListUser"
+	UserService_GetUser_FullMethodName           = "/user.v1.UserService/GetUser"
+	UserService_CreateUser_FullMethodName        = "/user.v1.UserService/CreateUser"
+	UserService_UpdateUser_FullMethodName        = "/user.v1.UserService/UpdateUser"
+	UserService_DeleteUser_FullMethodName        = "/user.v1.UserService/DeleteUser"
+	UserService_GetUserByUserName_FullMethodName = "/user.v1.UserService/GetUserByUserName"
+	UserService_VerifyPassword_FullMethodName    = "/user.v1.UserService/VerifyPassword"
+	UserService_UserExists_FullMethodName        = "/user.v1.UserService/UserExists"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -46,6 +47,8 @@ type UserServiceClient interface {
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
 	// Delete user
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Get user by username
+	GetUserByUserName(ctx context.Context, in *GetUserByUserNameRequest, opts ...grpc.CallOption) (*User, error)
 	// Verify password
 	VerifyPassword(ctx context.Context, in *VerifyPasswordRequest, opts ...grpc.CallOption) (*VerifyPasswordResponse, error)
 	// Check user exists
@@ -110,6 +113,16 @@ func (c *userServiceClient) DeleteUser(ctx context.Context, in *DeleteUserReques
 	return out, nil
 }
 
+func (c *userServiceClient) GetUserByUserName(ctx context.Context, in *GetUserByUserNameRequest, opts ...grpc.CallOption) (*User, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(User)
+	err := c.cc.Invoke(ctx, UserService_GetUserByUserName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) VerifyPassword(ctx context.Context, in *VerifyPasswordRequest, opts ...grpc.CallOption) (*VerifyPasswordResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(VerifyPasswordResponse)
@@ -146,6 +159,8 @@ type UserServiceServer interface {
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 	// Delete user
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
+	// Get user by username
+	GetUserByUserName(context.Context, *GetUserByUserNameRequest) (*User, error)
 	// Verify password
 	VerifyPassword(context.Context, *VerifyPasswordRequest) (*VerifyPasswordResponse, error)
 	// Check user exists
@@ -171,6 +186,9 @@ func (UnimplementedUserServiceServer) UpdateUser(context.Context, *UpdateUserReq
 }
 func (UnimplementedUserServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserByUserName(context.Context, *GetUserByUserNameRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserByUserName not implemented")
 }
 func (UnimplementedUserServiceServer) VerifyPassword(context.Context, *VerifyPasswordRequest) (*VerifyPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyPassword not implemented")
@@ -281,6 +299,24 @@ func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUserByUserName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByUserNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserByUserName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUserByUserName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserByUserName(ctx, req.(*GetUserByUserNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_VerifyPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VerifyPasswordRequest)
 	if err := dec(in); err != nil {
@@ -343,6 +379,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUser",
 			Handler:    _UserService_DeleteUser_Handler,
+		},
+		{
+			MethodName: "GetUserByUserName",
+			Handler:    _UserService_GetUserByUserName_Handler,
 		},
 		{
 			MethodName: "VerifyPassword",

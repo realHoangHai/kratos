@@ -13,33 +13,22 @@ option go_package = "github.com/realHoangHai/kratos/api/gen/go/user/v1;userv1";
 // The user service definition.
 service UserService {
   // List of users
-  rpc ListUser (common.v1.PagingRequest) returns (ListUserResponse) {
-    option (google.api.http) = {
-      get: "/v1/users"
-    };
-  }
+  rpc ListUser (common.v1.PagingRequest) returns (ListUserResponse) {}
 
   // Get user detail
   rpc GetUser (GetUserRequest) returns (User) {}
 
   // Create user
-  rpc CreateUser (CreateUserRequest) returns (User) {
-    option (google.api.http) = {
-      post: "/v1/users",
-      body: "*"
-    };
-  }
+  rpc CreateUser (CreateUserRequest) returns (User) {}
 
   // Update user
-  rpc UpdateUser (UpdateUserRequest) returns (User) {
-    option (google.api.http) = {
-      put: "/v1/users/{id}",
-      body: "*"
-    };
-  }
+  rpc UpdateUser (UpdateUserRequest) returns (User) {}
 
   // Delete user
   rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty) {}
+
+  // Get user by username
+  rpc GetUserByUserName (GetUserByUserNameRequest) returns (User) {}
 
   // Verify password
   rpc VerifyPassword (VerifyPasswordRequest) returns (VerifyPasswordResponse) {}
@@ -115,6 +104,9 @@ message DeleteUserRequest {
   uint32 operator_id = 2;
 }
 
+message GetUserByUserNameRequest {
+  string user_name = 1;
+}
 
 message VerifyPasswordRequest {
   string user_name = 1;

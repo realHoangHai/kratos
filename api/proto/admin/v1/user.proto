@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "user/v1/user.proto";
+import "common/v1/common.proto";
+
+// The user service definition.
+service UserService {
+  // List of users for admin
+  rpc ListUser (common.v1.PagingRequest) returns (user.v1.ListUserResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/users"
+    };
+  }
+
+  // Get user detail for admin
+  rpc GetUser (user.v1.GetUserRequest) returns (user.v1.User) {
+    option (google.api.http) = {
+      get: "/admin/v1/users/{id}"
+    };
+  }
+
+  // Create user
+  rpc CreateUser (user.v1.CreateUserRequest) returns (user.v1.User) {
+    option (google.api.http) = {
+      post: "/admin/v1/users"
+      body: "user"
+    };
+  }
+
+  // Update user for admin
+  rpc UpdateUser (user.v1.UpdateUserRequest) returns (user.v1.User) {
+    option (google.api.http) = {
+      put: "/admin/v1/users/{id}"
+      body: "user"
+    };
+  }
+
+  // Delete user for admin
+  rpc DeleteUser (user.v1.DeleteUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/users/{id}"
+    };
+  }
+}
