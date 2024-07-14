@@ -1,5 +1,5 @@
 syntax = "proto3";
-package kratos.api;
+package conf;
 
 option go_package = "github.com/realHoangHai/kratos/conf;conf";
 

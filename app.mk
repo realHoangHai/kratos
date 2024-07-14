@@ -51,7 +51,7 @@ docker:
 				  --build-arg APP_RELATIVE_PATH=$(APP_RELATIVE_PATH) GRPC_PORT=9000 REST_PORT=8000
 
 # generate code
-gen: ent wire api openapi
+gen: ent wire buf
 
 # generate ent code
 ent:
@@ -69,18 +69,12 @@ wire:
 	@go run -mod=mod github.com/google/wire/cmd/wire ./cmd/server
 
 # generate protobuf api go code
-api:
+buf:
 	@cd ../../api && \
 	buf generate
 
-# generate OpenAPI v3 doc
-openapi:
-	@cd ../../api && \
-	buf generate --path protos/admin/service/v1 --template protos/admin/service/v1/buf.openapi.gen.yaml && \
-	buf generate --path protos/front/service/v1 --template protos/front/service/v1/buf.openapi.gen.yaml
-
 # run application
-run: api openapi
+run: buf
 	@go run ./cmd/server -conf ./configs
 
 # run tests
@@ -100,7 +94,7 @@ lint:
 	@golangci-lint run
 
 # build service app
-app: api wire ent build
+app: buf wire ent build
 
 # show help
 help:

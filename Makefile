@@ -1,6 +1,9 @@
 GOHOSTOS:=$(shell go env GOHOSTOS)
 GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
+CURRENT_DIR:=$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+ROOT_DIR:=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+SRCS_MK:=$(foreach dir, app, $(wildcard $(dir)/*/Makefile))
 
 ifeq ($(GOHOSTOS), windows)
 	#the `find.exe` is different from `find` in bash/shell.
@@ -8,27 +11,22 @@ ifeq ($(GOHOSTOS), windows)
 	#changed to use git-bash.exe to run find cli or other cli friendly, caused of every developer has a Git.
 	#Git_Bash= $(subst cmd\,bin\bash.exe,$(dir $(shell where git)))
 	Git_Bash=$(subst \,/,$(subst cmd\,bin\bash.exe,$(dir $(shell where git))))
-	INTERNAL_PROTO_FILES=$(shell $(Git_Bash) -c "find internal -name *.proto")
+	CONFIG_PROTO_FILES=$(shell $(Git_Bash) -c "find conf -name *.proto")
 	API_PROTO_FILES=$(shell $(Git_Bash) -c "find api -name *.proto")
 	API_GO_FILES=$(shell $(Git_Bash) -c "find api -name *.go")
 else
-	INTERNAL_PROTO_FILES=$(shell find internal -name *.proto)
+	CONFIG_PROTO_FILES=$(shell find conf -name *.proto)
 	API_PROTO_FILES=$(shell find api -name *.proto)
 	API_GO_FILES=$(shell find api -name *.go)
 endif
 
-CURRENT_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-ROOT_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-
-SRCS_MK := $(foreach dir, app, $(wildcard $(dir)/*/Makefile))
-
 .PHONY: config
 # generate internal proto
 config:
-	protoc --proto_path=./internal \
+	protoc --proto_path=. \
 	       --proto_path=./third_party \
- 	       --go_out=paths=source_relative:./internal \
-	       $(INTERNAL_PROTO_FILES)
+ 	       --go_out=paths=source_relative:. \
+	       $(CONFIG_PROTO_FILES)
 
 .PHONY: api
 # generate api proto
