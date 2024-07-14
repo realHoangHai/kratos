@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package admin.v1;
+
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "common/v1/common.proto";
+
+// System configuration service
+service SystemService {
+  // Get a list of system settings
+  rpc ListSystem (common.v1.PagingRequest) returns (ListSystemResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/system"
+    };
+  }
+
+  // Get system setting data
+  rpc GetSystem (GetSystemRequest) returns (System) {
+    option (google.api.http) = {
+      get: "/admin/v1/system/{id}"
+    };
+  }
+
+  // Create system settings
+  rpc CreateSystem (CreateSystemRequest) returns (System) {
+    option (google.api.http) = {
+      post: "/admin/v1/system"
+      body: "*"
+    };
+  }
+
+  // Update system settings
+  rpc UpdateSystem (UpdateSystemRequest) returns (System) {
+    option (google.api.http) = {
+      put: "/admin/v1/system/{id}"
+      body: "system"
+    };
+  }
+
+  // Delete system settings
+  rpc DeleteSystem (DeleteSystemRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/system/{id}"
+    };
+  }
+}
+
+message System {
+  uint64 id = 1;
+  optional int32 theme = 2;
+  optional string title = 3;
+  optional string keywords = 4;
+  optional string description = 5;
+  optional string record_number = 6;
+}
+
+// Response - List of system settings
+message ListSystemResponse {
+  repeated System items = 1;
+  int32 total = 2;
+}
+
+// Request - System Settings Data
+message GetSystemRequest {
+  uint64 id = 1;
+}
+
+// Request - Create system settings
+message CreateSystemRequest {
+  System system = 1;
+  optional uint64 operator_id = 2;
+}
+
+// Request - Update system settings
+message UpdateSystemRequest {
+  uint64 id = 1;
+  System system = 2;
+  optional uint64 operator_id = 3;
+}
+
+// Request - Remove System Settings
+message DeleteSystemRequest {
+  uint64 id = 1;
+  optional uint64 operator_id = 2;
+}

@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: admin/v1/user.proto
 
-package servicev1
+package adminv1
 
 import (
 	context "context"
@@ -22,11 +22,11 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationUserServiceCreateUser = "/admin.service.v1.UserService/CreateUser"
-const OperationUserServiceDeleteUser = "/admin.service.v1.UserService/DeleteUser"
-const OperationUserServiceGetUser = "/admin.service.v1.UserService/GetUser"
-const OperationUserServiceListUser = "/admin.service.v1.UserService/ListUser"
-const OperationUserServiceUpdateUser = "/admin.service.v1.UserService/UpdateUser"
+const OperationUserServiceCreateUser = "/admin.v1.UserService/CreateUser"
+const OperationUserServiceDeleteUser = "/admin.v1.UserService/DeleteUser"
+const OperationUserServiceGetUser = "/admin.v1.UserService/GetUser"
+const OperationUserServiceListUser = "/admin.v1.UserService/ListUser"
+const OperationUserServiceUpdateUser = "/admin.v1.UserService/UpdateUser"
 
 type UserServiceHTTPServer interface {
 	// CreateUser Create user
