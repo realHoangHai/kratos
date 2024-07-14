@@ -22,7 +22,7 @@ APP_NAME=$(shell echo $(APP_RELATIVE_PATH) | sed -En "s/\//-/p")
 APP_DOCKER_IMAGE=$(shell echo $(APP_NAME) |awk -F '@' '{print "restroom-system/" $$0 ":0.1.0"}')
 
 
-.PHONY: dep vendor build clean docker gen ent wire api openapi run test cover vet lint app
+.PHONY: dep vendor build clean docker gen ent wire buf openapi run test cover vet lint app
 
 # download dependencies of module
 dep:
@@ -51,7 +51,7 @@ docker:
 				  --build-arg APP_RELATIVE_PATH=$(APP_RELATIVE_PATH) GRPC_PORT=9000 REST_PORT=8000
 
 # generate code
-gen: ent wire buf
+gen: ent wire buf openapi
 
 # generate ent code
 ent:
@@ -73,8 +73,14 @@ buf:
 	@cd ../../api && \
 	buf generate
 
+# generate OpenAPI v3 doc
+openapi:
+	@cd ../../api && \
+	buf generate --path proto/admin/v1 --template proto/admin/v1/openapi.gen.yaml && \
+	buf generate --path proto/frontend/v1 --template proto/frontend/v1/openapi.gen.yaml
+
 # run application
-run: buf
+run: buf openapi
 	@go run ./cmd/server -conf ./configs
 
 # run tests

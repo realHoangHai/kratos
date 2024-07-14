@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: frontend/v1/authentication.proto
 
-package servicev1
+package frontv1
 
 import (
 	context "context"
@@ -21,9 +21,9 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	AuthenticationService_Login_FullMethodName  = "/front.service.v1.AuthenticationService/Login"
-	AuthenticationService_Logout_FullMethodName = "/front.service.v1.AuthenticationService/Logout"
-	AuthenticationService_GetMe_FullMethodName  = "/front.service.v1.AuthenticationService/GetMe"
+	AuthenticationService_Login_FullMethodName  = "/front.v1.AuthenticationService/Login"
+	AuthenticationService_Logout_FullMethodName = "/front.v1.AuthenticationService/Logout"
+	AuthenticationService_GetMe_FullMethodName  = "/front.v1.AuthenticationService/GetMe"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -177,7 +177,7 @@ func _AuthenticationService_GetMe_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "front.service.v1.AuthenticationService",
+	ServiceName: "front.v1.AuthenticationService",
 	HandlerType: (*AuthenticationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: frontend/v1/authentication.proto
 
-package servicev1
+package frontv1
 
 import (
 	context "context"
@@ -21,9 +21,9 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationAuthenticationServiceGetMe = "/front.service.v1.AuthenticationService/GetMe"
-const OperationAuthenticationServiceLogin = "/front.service.v1.AuthenticationService/Login"
-const OperationAuthenticationServiceLogout = "/front.service.v1.AuthenticationService/Logout"
+const OperationAuthenticationServiceGetMe = "/front.v1.AuthenticationService/GetMe"
+const OperationAuthenticationServiceLogin = "/front.v1.AuthenticationService/Login"
+const OperationAuthenticationServiceLogout = "/front.v1.AuthenticationService/Logout"
 
 type AuthenticationServiceHTTPServer interface {
 	// GetMe APP Get the data of logged in user

@@ -40,6 +40,13 @@ api:
 	       --openapi_out=fq_schema_naming=true,default_response=false:. \
 	       $(API_PROTO_FILES)
 
+.PHONY: openapi
+# generate OpenAPI v3 docs.
+openapi:
+	@cd api && \
+	buf generate --path proto/admin/v1 --template proto/admin/v1/openapi.gen.yaml && \
+	buf generate --path proto/frontend/v1 --template proto/frontend/v1/openapi.gen.yaml
+
 .PHONY: wire
 # generate wire code
 wire:

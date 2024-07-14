@@ -34,7 +34,7 @@ type Data struct {
 
 // NewData .
 func NewData(entClient *entgo.Client[*ent.Client], redisClient *redis.Client, logger log.Logger) (*Data, func(), error) {
-	l := log.NewHelper(log.With(logger, "module", "data"))
+	l := log.NewHelper(log.With(logger, "module", "core/data"))
 
 	d := &Data{
 		db:  entClient,

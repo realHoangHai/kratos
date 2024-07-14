@@ -1,9 +1,10 @@
-package handler
+package cache
 
 import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/realHoangHai/kratos/component/authentication/engine"
 	"strconv"
 	"time"
 
@@ -13,13 +14,12 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 
 	userv1 "github.com/realHoangHai/kratos/api/gen/go/user/v1"
-	authn "github.com/realHoangHai/kratos/pkg/authentication/engine"
 )
 
 type UserToken struct {
 	log           *log.Helper
 	rdb           *redis.Client
-	authenticator authn.Authenticator
+	authenticator engine.Authenticator
 
 	accessTokenKeyPrefix  string
 	refreshTokenKeyPrefix string
@@ -27,7 +27,7 @@ type UserToken struct {
 
 func NewUserToken(
 	rdb *redis.Client,
-	authenticator authn.Authenticator,
+	authenticator engine.Authenticator,
 	logger log.Logger,
 	accessTokenKeyPrefix string,
 	refreshTokenKeyPrefix string,
@@ -44,9 +44,9 @@ func NewUserToken(
 
 // createAccessJwtToken generate JWT access token
 func (r *UserToken) createAccessJwtToken(_ string, userId uint32) string {
-	principal := authn.AuthClaims{
+	principal := engine.AuthClaims{
 		Subject: strconv.FormatUint(uint64(userId), 10),
-		Scopes:  make(authn.ScopeSet),
+		Scopes:  make(engine.ScopeSet),
 	}
 
 	signedToken, err := r.authenticator.CreateIdentity(principal)

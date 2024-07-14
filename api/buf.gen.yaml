@@ -14,11 +14,6 @@ plugins:
   - local: protoc-gen-go-http
     out: gen/go
     opt: paths=source_relative
-  # using protoc-gen-openapi
-  - remote: buf.build/community/google-gnostic-openapi:v0.7.0
-    out: gen
-    opt:
-      - paths=source_relative
   - local: protoc-gen-validate
     out: gen/go
     opt:
