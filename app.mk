@@ -77,7 +77,7 @@ buf:
 openapi:
 	@cd ../../api && \
 	buf generate --path proto/admin/v1 --template proto/admin/v1/openapi.gen.yaml && \
-	buf generate --path proto/frontend/v1 --template proto/frontend/v1/openapi.gen.yaml
+	buf generate --path proto/client/v1 --template proto/client/v1/openapi.gen.yaml
 
 # run application
 run: buf openapi

@@ -13,7 +13,7 @@ import (
 	adminv1 "github.com/realHoangHai/kratos/api/gen/go/admin/v1"
 	"github.com/realHoangHai/kratos/api/gen/go/conf"
 	"github.com/realHoangHai/kratos/app/admin/internal/service"
-	"github.com/realHoangHai/kratos/app/frontend/assets"
+	"github.com/realHoangHai/kratos/app/client/assets"
 	"github.com/realHoangHai/kratos/bootstrap/rpc"
 	"github.com/realHoangHai/kratos/bootstrap/swagger"
 	authnengine "github.com/realHoangHai/kratos/component/authentication/engine"

@@ -11,9 +11,9 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/realHoangHai/kratos/api/gen/go/conf"
-	"github.com/realHoangHai/kratos/app/frontend/internal/data"
-	"github.com/realHoangHai/kratos/app/frontend/internal/server"
-	"github.com/realHoangHai/kratos/app/frontend/internal/service"
+	"github.com/realHoangHai/kratos/app/client/internal/data"
+	"github.com/realHoangHai/kratos/app/client/internal/server"
+	"github.com/realHoangHai/kratos/app/client/internal/service"
 )
 
 // Injectors from wire.go:

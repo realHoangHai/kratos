@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/realHoangHai/kratos/app/frontend/assets"
+	"github.com/realHoangHai/kratos/app/client/assets"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
@@ -10,9 +10,9 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/selector"
 	"github.com/go-kratos/kratos/v2/transport/http"
 
+	clientv1 "github.com/realHoangHai/kratos/api/gen/go/client/v1"
 	"github.com/realHoangHai/kratos/api/gen/go/conf"
-	frontV1 "github.com/realHoangHai/kratos/api/gen/go/frontend/v1"
-	"github.com/realHoangHai/kratos/app/frontend/internal/service"
+	"github.com/realHoangHai/kratos/app/client/internal/service"
 	"github.com/realHoangHai/kratos/bootstrap/rpc"
 	"github.com/realHoangHai/kratos/bootstrap/swagger"
 	authnengine "github.com/realHoangHai/kratos/component/authentication/engine"
@@ -53,12 +53,12 @@ func NewHTTPServer(
 ) *http.Server {
 	srv := rpc.CreateHttpServer(cfg, newHttpMiddleware(authenticator, authorizer, logger)...)
 
-	frontV1.RegisterAuthenticationServiceHTTPServer(srv, authnSvc)
+	clientv1.RegisterAuthenticationServiceHTTPServer(srv, authnSvc)
 
 	if cfg.GetServer().GetHttp().GetEnableSwagger() {
 		swagger.RegisterSwaggerUIServerWithOption(
 			srv,
-			swagger.WithTitle("Front Service"),
+			swagger.WithTitle("Client Service"),
 			swagger.WithMemoryData(assets.OpenApiData, "yaml"),
 		)
 	}

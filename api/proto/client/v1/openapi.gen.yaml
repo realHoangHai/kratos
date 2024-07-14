@@ -12,7 +12,7 @@ managed:
 plugins:
   # using protoc-gen-openapi
   - remote: buf.build/community/google-gnostic-openapi:v0.7.0
-    out: ../app/frontend/assets
+    out: ../app/client/assets
     opt:
       - paths=source_relative
       - naming=json # Naming convention. Use "proto" to pass the name directly from the proto file. Default: json

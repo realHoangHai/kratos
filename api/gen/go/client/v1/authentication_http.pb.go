@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-http v2.7.3
 // - protoc             (unknown)
-// source: frontend/v1/authentication.proto
+// source: client/v1/authentication.proto
 
-package frontv1
+package clientv1
 
 import (
 	context "context"
@@ -21,9 +21,9 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationAuthenticationServiceGetMe = "/front.v1.AuthenticationService/GetMe"
-const OperationAuthenticationServiceLogin = "/front.v1.AuthenticationService/Login"
-const OperationAuthenticationServiceLogout = "/front.v1.AuthenticationService/Logout"
+const OperationAuthenticationServiceGetMe = "/client.v1.AuthenticationService/GetMe"
+const OperationAuthenticationServiceLogin = "/client.v1.AuthenticationService/Login"
+const OperationAuthenticationServiceLogout = "/client.v1.AuthenticationService/Logout"
 
 type AuthenticationServiceHTTPServer interface {
 	// GetMe APP Get the data of logged in user
