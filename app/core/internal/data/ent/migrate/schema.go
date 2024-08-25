@@ -17,7 +17,7 @@ var (
 		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "delete time"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "name"},
 		{Name: "guard_name", Type: field.TypeString, Nullable: true, Comment: "guard name"},
-		{Name: "description", Type: field.TypeInt32, Nullable: true, Comment: "description"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "description"},
 	}
 	// PermissionTable holds the schema information for the "permission" table.
 	PermissionTable = &schema.Table{

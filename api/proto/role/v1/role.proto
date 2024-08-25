@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package role.v1;
+
+import "google/api/annotations.proto";
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "common/v1/common.proto";
+
+option go_package = "github.com/realHoangHai/kratos/api/gen/go/role/v1;rolev1";
+
+// The role service definition.
+service RoleService {
+}

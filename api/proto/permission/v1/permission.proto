@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package permission.v1;
+
+import "google/api/annotations.proto";
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "common/v1/common.proto";
+
+option go_package = "github.com/realHoangHai/kratos/api/gen/go/permission/v1;permissionv1";
+
+// The permission service definition.
+service PermissionService {
+  // Get permission detail
+  rpc GetPermission (GetPermissionRequest) returns (Permission) {}
+
+  // Get permission by guard name
+  rpc GetPermissionByGuardName (GetPermissionByGuardNameRequest) returns (Permission) {}
+
+  // Get permissions detail
+  rpc GetPermissions (GetPermissionsRequest) returns (ListPermissionResponse) {}
+
+  // Get permissions by guard name
+  rpc GetPermissionsByGuardName (GetPermissionsByGuardNameRequest) returns (ListPermissionResponse) {}
+
+  // Create permission
+  rpc CreatePermission (CreatePermissionRequest) returns (Permission) {}
+
+  // Update permission
+  rpc UpdatePermission (UpdatePermissionRequest) returns (Permission) {}
+
+  // Delete permission
+  rpc DeletePermission (DeletePermissionRequest) returns (google.protobuf.Empty) {}
+}
+
+// Permission
+message Permission {
+  uint32 id = 1;
+  optional string name = 2;
+  optional string guard_name = 3;
+  optional string description = 4;
+  optional string create_time = 5;
+  optional string update_time = 6;
+  optional uint32 creator_id = 7 [(gnostic.openapi.v3.property) = {description: "CreatorID"}];
+}
+
+// List of permissions reply
+message ListPermissionResponse {
+  repeated Permission items = 1;
+  int32 total = 2;
+}
+
+message GetPermissionRequest {
+  uint32 id = 1;
+}
+
+message GetPermissionsRequest {
+  repeated uint32 id = 1;
+}
+
+message CreatePermissionRequest {
+  Permission permission = 1;
+  uint32 operator_id = 2;
+}
+
+message UpdatePermissionRequest {
+  uint32 id = 1;
+  Permission permission = 2;
+  uint32 operator_id = 3;
+}
+
+message DeletePermissionRequest {
+  uint32 id = 1;
+  uint32 operator_id = 2;
+}
+
+message GetPermissionByGuardNameRequest {
+  string guard_name = 1;
+}
+
+message GetPermissionsByGuardNameRequest {
+  repeated string guard_name = 1;
+}

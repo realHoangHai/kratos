@@ -44,8 +44,7 @@ type PermissionMutation struct {
 	adddelete_time *int64
 	name           *string
 	guard_name     *string
-	description    *int32
-	adddescription *int32
+	description    *string
 	clearedFields  map[string]struct{}
 	done           bool
 	oldValue       func(context.Context) (*Permission, error)
@@ -465,13 +464,12 @@ func (m *PermissionMutation) ResetGuardName() {
 }
 
 // SetDescription sets the "description" field.
-func (m *PermissionMutation) SetDescription(i int32) {
-	m.description = &i
-	m.adddescription = nil
+func (m *PermissionMutation) SetDescription(s string) {
+	m.description = &s
 }
 
 // Description returns the value of the "description" field in the mutation.
-func (m *PermissionMutation) Description() (r int32, exists bool) {
+func (m *PermissionMutation) Description() (r string, exists bool) {
 	v := m.description
 	if v == nil {
 		return
@@ -482,7 +480,7 @@ func (m *PermissionMutation) Description() (r int32, exists bool) {
 // OldDescription returns the old "description" field's value of the Permission entity.
 // If the Permission object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PermissionMutation) OldDescription(ctx context.Context) (v *int32, err error) {
+func (m *PermissionMutation) OldDescription(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
 	}
@@ -496,28 +494,9 @@ func (m *PermissionMutation) OldDescription(ctx context.Context) (v *int32, err 
 	return oldValue.Description, nil
 }
 
-// AddDescription adds i to the "description" field.
-func (m *PermissionMutation) AddDescription(i int32) {
-	if m.adddescription != nil {
-		*m.adddescription += i
-	} else {
-		m.adddescription = &i
-	}
-}
-
-// AddedDescription returns the value that was added to the "description" field in this mutation.
-func (m *PermissionMutation) AddedDescription() (r int32, exists bool) {
-	v := m.adddescription
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ClearDescription clears the value of the "description" field.
 func (m *PermissionMutation) ClearDescription() {
 	m.description = nil
-	m.adddescription = nil
 	m.clearedFields[permission.FieldDescription] = struct{}{}
 }
 
@@ -530,7 +509,6 @@ func (m *PermissionMutation) DescriptionCleared() bool {
 // ResetDescription resets all changes to the "description" field.
 func (m *PermissionMutation) ResetDescription() {
 	m.description = nil
-	m.adddescription = nil
 	delete(m.clearedFields, permission.FieldDescription)
 }
 
@@ -673,7 +651,7 @@ func (m *PermissionMutation) SetField(name string, value ent.Value) error {
 		m.SetGuardName(v)
 		return nil
 	case permission.FieldDescription:
-		v, ok := value.(int32)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -696,9 +674,6 @@ func (m *PermissionMutation) AddedFields() []string {
 	if m.adddelete_time != nil {
 		fields = append(fields, permission.FieldDeleteTime)
 	}
-	if m.adddescription != nil {
-		fields = append(fields, permission.FieldDescription)
-	}
 	return fields
 }
 
@@ -713,8 +688,6 @@ func (m *PermissionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdateTime()
 	case permission.FieldDeleteTime:
 		return m.AddedDeleteTime()
-	case permission.FieldDescription:
-		return m.AddedDescription()
 	}
 	return nil, false
 }
@@ -744,13 +717,6 @@ func (m *PermissionMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeleteTime(v)
-		return nil
-	case permission.FieldDescription:
-		v, ok := value.(int32)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDescription(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Permission numeric field %s", name)

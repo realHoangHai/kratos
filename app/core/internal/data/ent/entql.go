@@ -32,7 +32,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			permission.FieldDeleteTime:  {Type: field.TypeInt64, Column: permission.FieldDeleteTime},
 			permission.FieldName:        {Type: field.TypeString, Column: permission.FieldName},
 			permission.FieldGuardName:   {Type: field.TypeString, Column: permission.FieldGuardName},
-			permission.FieldDescription: {Type: field.TypeInt32, Column: permission.FieldDescription},
+			permission.FieldDescription: {Type: field.TypeString, Column: permission.FieldDescription},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -150,8 +150,8 @@ func (f *PermissionFilter) WhereGuardName(p entql.StringP) {
 	f.Where(p.Field(permission.FieldGuardName))
 }
 
-// WhereDescription applies the entql int32 predicate on the description field.
-func (f *PermissionFilter) WhereDescription(p entql.Int32P) {
+// WhereDescription applies the entql string predicate on the description field.
+func (f *PermissionFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(permission.FieldDescription))
 }
 

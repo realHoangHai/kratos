@@ -92,15 +92,15 @@ func (pc *PermissionCreate) SetNillableGuardName(s *string) *PermissionCreate {
 }
 
 // SetDescription sets the "description" field.
-func (pc *PermissionCreate) SetDescription(i int32) *PermissionCreate {
-	pc.mutation.SetDescription(i)
+func (pc *PermissionCreate) SetDescription(s string) *PermissionCreate {
+	pc.mutation.SetDescription(s)
 	return pc
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (pc *PermissionCreate) SetNillableDescription(i *int32) *PermissionCreate {
-	if i != nil {
-		pc.SetDescription(*i)
+func (pc *PermissionCreate) SetNillableDescription(s *string) *PermissionCreate {
+	if s != nil {
+		pc.SetDescription(*s)
 	}
 	return pc
 }
@@ -218,7 +218,7 @@ func (pc *PermissionCreate) createSpec() (*Permission, *sqlgraph.CreateSpec) {
 		_node.GuardName = value
 	}
 	if value, ok := pc.mutation.Description(); ok {
-		_spec.SetField(permission.FieldDescription, field.TypeInt32, value)
+		_spec.SetField(permission.FieldDescription, field.TypeString, value)
 		_node.Description = &value
 	}
 	return _node, _spec
@@ -358,7 +358,7 @@ func (u *PermissionUpsert) ClearGuardName() *PermissionUpsert {
 }
 
 // SetDescription sets the "description" field.
-func (u *PermissionUpsert) SetDescription(v int32) *PermissionUpsert {
+func (u *PermissionUpsert) SetDescription(v string) *PermissionUpsert {
 	u.Set(permission.FieldDescription, v)
 	return u
 }
@@ -366,12 +366,6 @@ func (u *PermissionUpsert) SetDescription(v int32) *PermissionUpsert {
 // UpdateDescription sets the "description" field to the value that was provided on create.
 func (u *PermissionUpsert) UpdateDescription() *PermissionUpsert {
 	u.SetExcluded(permission.FieldDescription)
-	return u
-}
-
-// AddDescription adds v to the "description" field.
-func (u *PermissionUpsert) AddDescription(v int32) *PermissionUpsert {
-	u.Add(permission.FieldDescription, v)
 	return u
 }
 
@@ -531,16 +525,9 @@ func (u *PermissionUpsertOne) ClearGuardName() *PermissionUpsertOne {
 }
 
 // SetDescription sets the "description" field.
-func (u *PermissionUpsertOne) SetDescription(v int32) *PermissionUpsertOne {
+func (u *PermissionUpsertOne) SetDescription(v string) *PermissionUpsertOne {
 	return u.Update(func(s *PermissionUpsert) {
 		s.SetDescription(v)
-	})
-}
-
-// AddDescription adds v to the "description" field.
-func (u *PermissionUpsertOne) AddDescription(v int32) *PermissionUpsertOne {
-	return u.Update(func(s *PermissionUpsert) {
-		s.AddDescription(v)
 	})
 }
 
@@ -874,16 +861,9 @@ func (u *PermissionUpsertBulk) ClearGuardName() *PermissionUpsertBulk {
 }
 
 // SetDescription sets the "description" field.
-func (u *PermissionUpsertBulk) SetDescription(v int32) *PermissionUpsertBulk {
+func (u *PermissionUpsertBulk) SetDescription(v string) *PermissionUpsertBulk {
 	return u.Update(func(s *PermissionUpsert) {
 		s.SetDescription(v)
-	})
-}
-
-// AddDescription adds v to the "description" field.
-func (u *PermissionUpsertBulk) AddDescription(v int32) *PermissionUpsertBulk {
-	return u.Update(func(s *PermissionUpsert) {
-		s.AddDescription(v)
 	})
 }
 

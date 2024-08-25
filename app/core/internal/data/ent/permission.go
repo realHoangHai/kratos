@@ -28,7 +28,7 @@ type Permission struct {
 	// guard name
 	GuardName string `json:"guard_name,omitempty"`
 	// description
-	Description  *int32 `json:"description,omitempty"`
+	Description  *string `json:"description,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -37,9 +37,9 @@ func (*Permission) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case permission.FieldID, permission.FieldCreateTime, permission.FieldUpdateTime, permission.FieldDeleteTime, permission.FieldDescription:
+		case permission.FieldID, permission.FieldCreateTime, permission.FieldUpdateTime, permission.FieldDeleteTime:
 			values[i] = new(sql.NullInt64)
-		case permission.FieldName, permission.FieldGuardName:
+		case permission.FieldName, permission.FieldGuardName, permission.FieldDescription:
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -96,11 +96,11 @@ func (pe *Permission) assignValues(columns []string, values []any) error {
 				pe.GuardName = value.String
 			}
 		case permission.FieldDescription:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				pe.Description = new(int32)
-				*pe.Description = int32(value.Int64)
+				pe.Description = new(string)
+				*pe.Description = value.String
 			}
 		default:
 			pe.selectValues.Set(columns[i], values[i])
@@ -161,7 +161,7 @@ func (pe *Permission) String() string {
 	builder.WriteString(", ")
 	if v := pe.Description; v != nil {
 		builder.WriteString("description=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
+		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')
 	return builder.String()

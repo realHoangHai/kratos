@@ -115,23 +115,16 @@ func (pu *PermissionUpdate) ClearGuardName() *PermissionUpdate {
 }
 
 // SetDescription sets the "description" field.
-func (pu *PermissionUpdate) SetDescription(i int32) *PermissionUpdate {
-	pu.mutation.ResetDescription()
-	pu.mutation.SetDescription(i)
+func (pu *PermissionUpdate) SetDescription(s string) *PermissionUpdate {
+	pu.mutation.SetDescription(s)
 	return pu
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (pu *PermissionUpdate) SetNillableDescription(i *int32) *PermissionUpdate {
-	if i != nil {
-		pu.SetDescription(*i)
+func (pu *PermissionUpdate) SetNillableDescription(s *string) *PermissionUpdate {
+	if s != nil {
+		pu.SetDescription(*s)
 	}
-	return pu
-}
-
-// AddDescription adds i to the "description" field.
-func (pu *PermissionUpdate) AddDescription(i int32) *PermissionUpdate {
-	pu.mutation.AddDescription(i)
 	return pu
 }
 
@@ -244,13 +237,10 @@ func (pu *PermissionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(permission.FieldGuardName, field.TypeString)
 	}
 	if value, ok := pu.mutation.Description(); ok {
-		_spec.SetField(permission.FieldDescription, field.TypeInt32, value)
-	}
-	if value, ok := pu.mutation.AddedDescription(); ok {
-		_spec.AddField(permission.FieldDescription, field.TypeInt32, value)
+		_spec.SetField(permission.FieldDescription, field.TypeString, value)
 	}
 	if pu.mutation.DescriptionCleared() {
-		_spec.ClearField(permission.FieldDescription, field.TypeInt32)
+		_spec.ClearField(permission.FieldDescription, field.TypeString)
 	}
 	_spec.AddModifiers(pu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, pu.driver, _spec); err != nil {
@@ -361,23 +351,16 @@ func (puo *PermissionUpdateOne) ClearGuardName() *PermissionUpdateOne {
 }
 
 // SetDescription sets the "description" field.
-func (puo *PermissionUpdateOne) SetDescription(i int32) *PermissionUpdateOne {
-	puo.mutation.ResetDescription()
-	puo.mutation.SetDescription(i)
+func (puo *PermissionUpdateOne) SetDescription(s string) *PermissionUpdateOne {
+	puo.mutation.SetDescription(s)
 	return puo
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (puo *PermissionUpdateOne) SetNillableDescription(i *int32) *PermissionUpdateOne {
-	if i != nil {
-		puo.SetDescription(*i)
+func (puo *PermissionUpdateOne) SetNillableDescription(s *string) *PermissionUpdateOne {
+	if s != nil {
+		puo.SetDescription(*s)
 	}
-	return puo
-}
-
-// AddDescription adds i to the "description" field.
-func (puo *PermissionUpdateOne) AddDescription(i int32) *PermissionUpdateOne {
-	puo.mutation.AddDescription(i)
 	return puo
 }
 
@@ -520,13 +503,10 @@ func (puo *PermissionUpdateOne) sqlSave(ctx context.Context) (_node *Permission,
 		_spec.ClearField(permission.FieldGuardName, field.TypeString)
 	}
 	if value, ok := puo.mutation.Description(); ok {
-		_spec.SetField(permission.FieldDescription, field.TypeInt32, value)
-	}
-	if value, ok := puo.mutation.AddedDescription(); ok {
-		_spec.AddField(permission.FieldDescription, field.TypeInt32, value)
+		_spec.SetField(permission.FieldDescription, field.TypeString, value)
 	}
 	if puo.mutation.DescriptionCleared() {
-		_spec.ClearField(permission.FieldDescription, field.TypeInt32)
+		_spec.ClearField(permission.FieldDescription, field.TypeString)
 	}
 	_spec.AddModifiers(puo.modifiers...)
 	_node = &Permission{config: puo.config}

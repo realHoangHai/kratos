@@ -28,7 +28,11 @@ func wireApp(logger log.Logger, registrar registry.Registrar, bootstrap *conf.Bo
 	}
 	userRepo := data.NewUserRepo(dataData, logger)
 	userService := service.NewUserService(logger, userRepo)
-	grpcServer := server.NewGRPCServer(bootstrap, logger, userService)
+	roleRepo := data.NewRoleRepo(dataData, logger)
+	roleService := service.NewRoleService(logger, roleRepo)
+	permissionRepo := data.NewPermissionRepo(dataData, logger)
+	permissionService := service.NewPermissionService(logger, permissionRepo)
+	grpcServer := server.NewGRPCServer(bootstrap, logger, userService, roleService, permissionService)
 	app := newApp(logger, registrar, grpcServer)
 	return app, func() {
 		cleanup()

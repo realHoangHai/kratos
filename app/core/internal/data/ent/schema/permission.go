@@ -36,7 +36,7 @@ func (Permission) Fields() []ent.Field {
 			Comment("guard name").
 			Optional(),
 
-		field.Int32("description").
+		field.String("description").
 			Comment("description").
 			Optional().
 			Nillable(),
