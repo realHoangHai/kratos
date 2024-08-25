@@ -24,7 +24,7 @@ type UserRepo struct {
 }
 
 func NewUserRepo(data *Data, logger log.Logger) *UserRepo {
-	l := log.NewHelper(log.With(logger, "module", "core/data/user"))
+	l := log.NewHelper(log.With(logger, "module", "user/data/core-service"))
 	return &UserRepo{
 		data: data,
 		log:  l,

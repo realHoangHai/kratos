@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"github.com/realHoangHai/kratos/app/core/internal/data/ent/permission"
+	"github.com/realHoangHai/kratos/app/core/internal/data/ent/role"
 	"github.com/realHoangHai/kratos/app/core/internal/data/ent/schema"
 	"github.com/realHoangHai/kratos/app/core/internal/data/ent/user"
 )
@@ -11,6 +13,52 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	permissionMixin := schema.Permission{}.Mixin()
+	permissionMixinFields0 := permissionMixin[0].Fields()
+	_ = permissionMixinFields0
+	permissionMixinFields1 := permissionMixin[1].Fields()
+	_ = permissionMixinFields1
+	permissionFields := schema.Permission{}.Fields()
+	_ = permissionFields
+	// permissionDescCreateTime is the schema descriptor for create_time field.
+	permissionDescCreateTime := permissionMixinFields1[0].Descriptor()
+	// permission.DefaultCreateTime holds the default value on creation for the create_time field.
+	permission.DefaultCreateTime = permissionDescCreateTime.Default.(func() int64)
+	// permissionDescUpdateTime is the schema descriptor for update_time field.
+	permissionDescUpdateTime := permissionMixinFields1[1].Descriptor()
+	// permission.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	permission.UpdateDefaultUpdateTime = permissionDescUpdateTime.UpdateDefault.(func() int64)
+	// permissionDescName is the schema descriptor for name field.
+	permissionDescName := permissionFields[0].Descriptor()
+	// permission.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	permission.NameValidator = permissionDescName.Validators[0].(func(string) error)
+	// permissionDescID is the schema descriptor for id field.
+	permissionDescID := permissionMixinFields0[0].Descriptor()
+	// permission.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	permission.IDValidator = permissionDescID.Validators[0].(func(uint32) error)
+	roleMixin := schema.Role{}.Mixin()
+	roleMixinFields0 := roleMixin[0].Fields()
+	_ = roleMixinFields0
+	roleMixinFields1 := roleMixin[1].Fields()
+	_ = roleMixinFields1
+	roleFields := schema.Role{}.Fields()
+	_ = roleFields
+	// roleDescCreateTime is the schema descriptor for create_time field.
+	roleDescCreateTime := roleMixinFields1[0].Descriptor()
+	// role.DefaultCreateTime holds the default value on creation for the create_time field.
+	role.DefaultCreateTime = roleDescCreateTime.Default.(func() int64)
+	// roleDescUpdateTime is the schema descriptor for update_time field.
+	roleDescUpdateTime := roleMixinFields1[1].Descriptor()
+	// role.UpdateDefaultUpdateTime holds the default value on update for the update_time field.
+	role.UpdateDefaultUpdateTime = roleDescUpdateTime.UpdateDefault.(func() int64)
+	// roleDescName is the schema descriptor for name field.
+	roleDescName := roleFields[0].Descriptor()
+	// role.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	role.NameValidator = roleDescName.Validators[0].(func(string) error)
+	// roleDescID is the schema descriptor for id field.
+	roleDescID := roleMixinFields0[0].Descriptor()
+	// role.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	role.IDValidator = roleDescID.Validators[0].(func(uint32) error)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

@@ -10,7 +10,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/realHoangHai/kratos/app/core/internal/data/ent/permission"
 	"github.com/realHoangHai/kratos/app/core/internal/data/ent/predicate"
+	"github.com/realHoangHai/kratos/app/core/internal/data/ent/role"
 	"github.com/realHoangHai/kratos/app/core/internal/data/ent/user"
 )
 
@@ -23,8 +25,1726 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeUser = "User"
+	TypePermission = "Permission"
+	TypeRole       = "Role"
+	TypeUser       = "User"
 )
+
+// PermissionMutation represents an operation that mutates the Permission nodes in the graph.
+type PermissionMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *uint32
+	create_time    *int64
+	addcreate_time *int64
+	update_time    *int64
+	addupdate_time *int64
+	delete_time    *int64
+	adddelete_time *int64
+	name           *string
+	guard_name     *string
+	description    *int32
+	adddescription *int32
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*Permission, error)
+	predicates     []predicate.Permission
+}
+
+var _ ent.Mutation = (*PermissionMutation)(nil)
+
+// permissionOption allows management of the mutation configuration using functional options.
+type permissionOption func(*PermissionMutation)
+
+// newPermissionMutation creates new mutation for the Permission entity.
+func newPermissionMutation(c config, op Op, opts ...permissionOption) *PermissionMutation {
+	m := &PermissionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePermission,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPermissionID sets the ID field of the mutation.
+func withPermissionID(id uint32) permissionOption {
+	return func(m *PermissionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Permission
+		)
+		m.oldValue = func(ctx context.Context) (*Permission, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Permission.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPermission sets the old Permission of the mutation.
+func withPermission(node *Permission) permissionOption {
+	return func(m *PermissionMutation) {
+		m.oldValue = func(context.Context) (*Permission, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PermissionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PermissionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Permission entities.
+func (m *PermissionMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PermissionMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PermissionMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Permission.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreateTime sets the "create_time" field.
+func (m *PermissionMutation) SetCreateTime(i int64) {
+	m.create_time = &i
+	m.addcreate_time = nil
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *PermissionMutation) CreateTime() (r int64, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the Permission entity.
+// If the Permission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PermissionMutation) OldCreateTime(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// AddCreateTime adds i to the "create_time" field.
+func (m *PermissionMutation) AddCreateTime(i int64) {
+	if m.addcreate_time != nil {
+		*m.addcreate_time += i
+	} else {
+		m.addcreate_time = &i
+	}
+}
+
+// AddedCreateTime returns the value that was added to the "create_time" field in this mutation.
+func (m *PermissionMutation) AddedCreateTime() (r int64, exists bool) {
+	v := m.addcreate_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreateTime clears the value of the "create_time" field.
+func (m *PermissionMutation) ClearCreateTime() {
+	m.create_time = nil
+	m.addcreate_time = nil
+	m.clearedFields[permission.FieldCreateTime] = struct{}{}
+}
+
+// CreateTimeCleared returns if the "create_time" field was cleared in this mutation.
+func (m *PermissionMutation) CreateTimeCleared() bool {
+	_, ok := m.clearedFields[permission.FieldCreateTime]
+	return ok
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *PermissionMutation) ResetCreateTime() {
+	m.create_time = nil
+	m.addcreate_time = nil
+	delete(m.clearedFields, permission.FieldCreateTime)
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *PermissionMutation) SetUpdateTime(i int64) {
+	m.update_time = &i
+	m.addupdate_time = nil
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *PermissionMutation) UpdateTime() (r int64, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the Permission entity.
+// If the Permission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PermissionMutation) OldUpdateTime(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// AddUpdateTime adds i to the "update_time" field.
+func (m *PermissionMutation) AddUpdateTime(i int64) {
+	if m.addupdate_time != nil {
+		*m.addupdate_time += i
+	} else {
+		m.addupdate_time = &i
+	}
+}
+
+// AddedUpdateTime returns the value that was added to the "update_time" field in this mutation.
+func (m *PermissionMutation) AddedUpdateTime() (r int64, exists bool) {
+	v := m.addupdate_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdateTime clears the value of the "update_time" field.
+func (m *PermissionMutation) ClearUpdateTime() {
+	m.update_time = nil
+	m.addupdate_time = nil
+	m.clearedFields[permission.FieldUpdateTime] = struct{}{}
+}
+
+// UpdateTimeCleared returns if the "update_time" field was cleared in this mutation.
+func (m *PermissionMutation) UpdateTimeCleared() bool {
+	_, ok := m.clearedFields[permission.FieldUpdateTime]
+	return ok
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *PermissionMutation) ResetUpdateTime() {
+	m.update_time = nil
+	m.addupdate_time = nil
+	delete(m.clearedFields, permission.FieldUpdateTime)
+}
+
+// SetDeleteTime sets the "delete_time" field.
+func (m *PermissionMutation) SetDeleteTime(i int64) {
+	m.delete_time = &i
+	m.adddelete_time = nil
+}
+
+// DeleteTime returns the value of the "delete_time" field in the mutation.
+func (m *PermissionMutation) DeleteTime() (r int64, exists bool) {
+	v := m.delete_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleteTime returns the old "delete_time" field's value of the Permission entity.
+// If the Permission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PermissionMutation) OldDeleteTime(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleteTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleteTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleteTime: %w", err)
+	}
+	return oldValue.DeleteTime, nil
+}
+
+// AddDeleteTime adds i to the "delete_time" field.
+func (m *PermissionMutation) AddDeleteTime(i int64) {
+	if m.adddelete_time != nil {
+		*m.adddelete_time += i
+	} else {
+		m.adddelete_time = &i
+	}
+}
+
+// AddedDeleteTime returns the value that was added to the "delete_time" field in this mutation.
+func (m *PermissionMutation) AddedDeleteTime() (r int64, exists bool) {
+	v := m.adddelete_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeleteTime clears the value of the "delete_time" field.
+func (m *PermissionMutation) ClearDeleteTime() {
+	m.delete_time = nil
+	m.adddelete_time = nil
+	m.clearedFields[permission.FieldDeleteTime] = struct{}{}
+}
+
+// DeleteTimeCleared returns if the "delete_time" field was cleared in this mutation.
+func (m *PermissionMutation) DeleteTimeCleared() bool {
+	_, ok := m.clearedFields[permission.FieldDeleteTime]
+	return ok
+}
+
+// ResetDeleteTime resets all changes to the "delete_time" field.
+func (m *PermissionMutation) ResetDeleteTime() {
+	m.delete_time = nil
+	m.adddelete_time = nil
+	delete(m.clearedFields, permission.FieldDeleteTime)
+}
+
+// SetName sets the "name" field.
+func (m *PermissionMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *PermissionMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Permission entity.
+// If the Permission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PermissionMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *PermissionMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[permission.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *PermissionMutation) NameCleared() bool {
+	_, ok := m.clearedFields[permission.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *PermissionMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, permission.FieldName)
+}
+
+// SetGuardName sets the "guard_name" field.
+func (m *PermissionMutation) SetGuardName(s string) {
+	m.guard_name = &s
+}
+
+// GuardName returns the value of the "guard_name" field in the mutation.
+func (m *PermissionMutation) GuardName() (r string, exists bool) {
+	v := m.guard_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGuardName returns the old "guard_name" field's value of the Permission entity.
+// If the Permission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PermissionMutation) OldGuardName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGuardName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGuardName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGuardName: %w", err)
+	}
+	return oldValue.GuardName, nil
+}
+
+// ClearGuardName clears the value of the "guard_name" field.
+func (m *PermissionMutation) ClearGuardName() {
+	m.guard_name = nil
+	m.clearedFields[permission.FieldGuardName] = struct{}{}
+}
+
+// GuardNameCleared returns if the "guard_name" field was cleared in this mutation.
+func (m *PermissionMutation) GuardNameCleared() bool {
+	_, ok := m.clearedFields[permission.FieldGuardName]
+	return ok
+}
+
+// ResetGuardName resets all changes to the "guard_name" field.
+func (m *PermissionMutation) ResetGuardName() {
+	m.guard_name = nil
+	delete(m.clearedFields, permission.FieldGuardName)
+}
+
+// SetDescription sets the "description" field.
+func (m *PermissionMutation) SetDescription(i int32) {
+	m.description = &i
+	m.adddescription = nil
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *PermissionMutation) Description() (r int32, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the Permission entity.
+// If the Permission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PermissionMutation) OldDescription(ctx context.Context) (v *int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// AddDescription adds i to the "description" field.
+func (m *PermissionMutation) AddDescription(i int32) {
+	if m.adddescription != nil {
+		*m.adddescription += i
+	} else {
+		m.adddescription = &i
+	}
+}
+
+// AddedDescription returns the value that was added to the "description" field in this mutation.
+func (m *PermissionMutation) AddedDescription() (r int32, exists bool) {
+	v := m.adddescription
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *PermissionMutation) ClearDescription() {
+	m.description = nil
+	m.adddescription = nil
+	m.clearedFields[permission.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *PermissionMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[permission.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *PermissionMutation) ResetDescription() {
+	m.description = nil
+	m.adddescription = nil
+	delete(m.clearedFields, permission.FieldDescription)
+}
+
+// Where appends a list predicates to the PermissionMutation builder.
+func (m *PermissionMutation) Where(ps ...predicate.Permission) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PermissionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PermissionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Permission, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PermissionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PermissionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Permission).
+func (m *PermissionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PermissionMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.create_time != nil {
+		fields = append(fields, permission.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, permission.FieldUpdateTime)
+	}
+	if m.delete_time != nil {
+		fields = append(fields, permission.FieldDeleteTime)
+	}
+	if m.name != nil {
+		fields = append(fields, permission.FieldName)
+	}
+	if m.guard_name != nil {
+		fields = append(fields, permission.FieldGuardName)
+	}
+	if m.description != nil {
+		fields = append(fields, permission.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PermissionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case permission.FieldCreateTime:
+		return m.CreateTime()
+	case permission.FieldUpdateTime:
+		return m.UpdateTime()
+	case permission.FieldDeleteTime:
+		return m.DeleteTime()
+	case permission.FieldName:
+		return m.Name()
+	case permission.FieldGuardName:
+		return m.GuardName()
+	case permission.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PermissionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case permission.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case permission.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case permission.FieldDeleteTime:
+		return m.OldDeleteTime(ctx)
+	case permission.FieldName:
+		return m.OldName(ctx)
+	case permission.FieldGuardName:
+		return m.OldGuardName(ctx)
+	case permission.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown Permission field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PermissionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case permission.FieldCreateTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case permission.FieldUpdateTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case permission.FieldDeleteTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleteTime(v)
+		return nil
+	case permission.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case permission.FieldGuardName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGuardName(v)
+		return nil
+	case permission.FieldDescription:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Permission field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PermissionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreate_time != nil {
+		fields = append(fields, permission.FieldCreateTime)
+	}
+	if m.addupdate_time != nil {
+		fields = append(fields, permission.FieldUpdateTime)
+	}
+	if m.adddelete_time != nil {
+		fields = append(fields, permission.FieldDeleteTime)
+	}
+	if m.adddescription != nil {
+		fields = append(fields, permission.FieldDescription)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PermissionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case permission.FieldCreateTime:
+		return m.AddedCreateTime()
+	case permission.FieldUpdateTime:
+		return m.AddedUpdateTime()
+	case permission.FieldDeleteTime:
+		return m.AddedDeleteTime()
+	case permission.FieldDescription:
+		return m.AddedDescription()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PermissionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case permission.FieldCreateTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreateTime(v)
+		return nil
+	case permission.FieldUpdateTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdateTime(v)
+		return nil
+	case permission.FieldDeleteTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeleteTime(v)
+		return nil
+	case permission.FieldDescription:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Permission numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PermissionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(permission.FieldCreateTime) {
+		fields = append(fields, permission.FieldCreateTime)
+	}
+	if m.FieldCleared(permission.FieldUpdateTime) {
+		fields = append(fields, permission.FieldUpdateTime)
+	}
+	if m.FieldCleared(permission.FieldDeleteTime) {
+		fields = append(fields, permission.FieldDeleteTime)
+	}
+	if m.FieldCleared(permission.FieldName) {
+		fields = append(fields, permission.FieldName)
+	}
+	if m.FieldCleared(permission.FieldGuardName) {
+		fields = append(fields, permission.FieldGuardName)
+	}
+	if m.FieldCleared(permission.FieldDescription) {
+		fields = append(fields, permission.FieldDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PermissionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PermissionMutation) ClearField(name string) error {
+	switch name {
+	case permission.FieldCreateTime:
+		m.ClearCreateTime()
+		return nil
+	case permission.FieldUpdateTime:
+		m.ClearUpdateTime()
+		return nil
+	case permission.FieldDeleteTime:
+		m.ClearDeleteTime()
+		return nil
+	case permission.FieldName:
+		m.ClearName()
+		return nil
+	case permission.FieldGuardName:
+		m.ClearGuardName()
+		return nil
+	case permission.FieldDescription:
+		m.ClearDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown Permission nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PermissionMutation) ResetField(name string) error {
+	switch name {
+	case permission.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case permission.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case permission.FieldDeleteTime:
+		m.ResetDeleteTime()
+		return nil
+	case permission.FieldName:
+		m.ResetName()
+		return nil
+	case permission.FieldGuardName:
+		m.ResetGuardName()
+		return nil
+	case permission.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown Permission field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PermissionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PermissionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PermissionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PermissionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PermissionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PermissionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PermissionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Permission unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PermissionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Permission edge %s", name)
+}
+
+// RoleMutation represents an operation that mutates the Role nodes in the graph.
+type RoleMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *uint32
+	create_time    *int64
+	addcreate_time *int64
+	update_time    *int64
+	addupdate_time *int64
+	delete_time    *int64
+	adddelete_time *int64
+	name           *string
+	guard_name     *string
+	description    *int32
+	adddescription *int32
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*Role, error)
+	predicates     []predicate.Role
+}
+
+var _ ent.Mutation = (*RoleMutation)(nil)
+
+// roleOption allows management of the mutation configuration using functional options.
+type roleOption func(*RoleMutation)
+
+// newRoleMutation creates new mutation for the Role entity.
+func newRoleMutation(c config, op Op, opts ...roleOption) *RoleMutation {
+	m := &RoleMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRole,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRoleID sets the ID field of the mutation.
+func withRoleID(id uint32) roleOption {
+	return func(m *RoleMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Role
+		)
+		m.oldValue = func(ctx context.Context) (*Role, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Role.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRole sets the old Role of the mutation.
+func withRole(node *Role) roleOption {
+	return func(m *RoleMutation) {
+		m.oldValue = func(context.Context) (*Role, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RoleMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RoleMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Role entities.
+func (m *RoleMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RoleMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RoleMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Role.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreateTime sets the "create_time" field.
+func (m *RoleMutation) SetCreateTime(i int64) {
+	m.create_time = &i
+	m.addcreate_time = nil
+}
+
+// CreateTime returns the value of the "create_time" field in the mutation.
+func (m *RoleMutation) CreateTime() (r int64, exists bool) {
+	v := m.create_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreateTime returns the old "create_time" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldCreateTime(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreateTime: %w", err)
+	}
+	return oldValue.CreateTime, nil
+}
+
+// AddCreateTime adds i to the "create_time" field.
+func (m *RoleMutation) AddCreateTime(i int64) {
+	if m.addcreate_time != nil {
+		*m.addcreate_time += i
+	} else {
+		m.addcreate_time = &i
+	}
+}
+
+// AddedCreateTime returns the value that was added to the "create_time" field in this mutation.
+func (m *RoleMutation) AddedCreateTime() (r int64, exists bool) {
+	v := m.addcreate_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreateTime clears the value of the "create_time" field.
+func (m *RoleMutation) ClearCreateTime() {
+	m.create_time = nil
+	m.addcreate_time = nil
+	m.clearedFields[role.FieldCreateTime] = struct{}{}
+}
+
+// CreateTimeCleared returns if the "create_time" field was cleared in this mutation.
+func (m *RoleMutation) CreateTimeCleared() bool {
+	_, ok := m.clearedFields[role.FieldCreateTime]
+	return ok
+}
+
+// ResetCreateTime resets all changes to the "create_time" field.
+func (m *RoleMutation) ResetCreateTime() {
+	m.create_time = nil
+	m.addcreate_time = nil
+	delete(m.clearedFields, role.FieldCreateTime)
+}
+
+// SetUpdateTime sets the "update_time" field.
+func (m *RoleMutation) SetUpdateTime(i int64) {
+	m.update_time = &i
+	m.addupdate_time = nil
+}
+
+// UpdateTime returns the value of the "update_time" field in the mutation.
+func (m *RoleMutation) UpdateTime() (r int64, exists bool) {
+	v := m.update_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdateTime returns the old "update_time" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldUpdateTime(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdateTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdateTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdateTime: %w", err)
+	}
+	return oldValue.UpdateTime, nil
+}
+
+// AddUpdateTime adds i to the "update_time" field.
+func (m *RoleMutation) AddUpdateTime(i int64) {
+	if m.addupdate_time != nil {
+		*m.addupdate_time += i
+	} else {
+		m.addupdate_time = &i
+	}
+}
+
+// AddedUpdateTime returns the value that was added to the "update_time" field in this mutation.
+func (m *RoleMutation) AddedUpdateTime() (r int64, exists bool) {
+	v := m.addupdate_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdateTime clears the value of the "update_time" field.
+func (m *RoleMutation) ClearUpdateTime() {
+	m.update_time = nil
+	m.addupdate_time = nil
+	m.clearedFields[role.FieldUpdateTime] = struct{}{}
+}
+
+// UpdateTimeCleared returns if the "update_time" field was cleared in this mutation.
+func (m *RoleMutation) UpdateTimeCleared() bool {
+	_, ok := m.clearedFields[role.FieldUpdateTime]
+	return ok
+}
+
+// ResetUpdateTime resets all changes to the "update_time" field.
+func (m *RoleMutation) ResetUpdateTime() {
+	m.update_time = nil
+	m.addupdate_time = nil
+	delete(m.clearedFields, role.FieldUpdateTime)
+}
+
+// SetDeleteTime sets the "delete_time" field.
+func (m *RoleMutation) SetDeleteTime(i int64) {
+	m.delete_time = &i
+	m.adddelete_time = nil
+}
+
+// DeleteTime returns the value of the "delete_time" field in the mutation.
+func (m *RoleMutation) DeleteTime() (r int64, exists bool) {
+	v := m.delete_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleteTime returns the old "delete_time" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldDeleteTime(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleteTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleteTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleteTime: %w", err)
+	}
+	return oldValue.DeleteTime, nil
+}
+
+// AddDeleteTime adds i to the "delete_time" field.
+func (m *RoleMutation) AddDeleteTime(i int64) {
+	if m.adddelete_time != nil {
+		*m.adddelete_time += i
+	} else {
+		m.adddelete_time = &i
+	}
+}
+
+// AddedDeleteTime returns the value that was added to the "delete_time" field in this mutation.
+func (m *RoleMutation) AddedDeleteTime() (r int64, exists bool) {
+	v := m.adddelete_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeleteTime clears the value of the "delete_time" field.
+func (m *RoleMutation) ClearDeleteTime() {
+	m.delete_time = nil
+	m.adddelete_time = nil
+	m.clearedFields[role.FieldDeleteTime] = struct{}{}
+}
+
+// DeleteTimeCleared returns if the "delete_time" field was cleared in this mutation.
+func (m *RoleMutation) DeleteTimeCleared() bool {
+	_, ok := m.clearedFields[role.FieldDeleteTime]
+	return ok
+}
+
+// ResetDeleteTime resets all changes to the "delete_time" field.
+func (m *RoleMutation) ResetDeleteTime() {
+	m.delete_time = nil
+	m.adddelete_time = nil
+	delete(m.clearedFields, role.FieldDeleteTime)
+}
+
+// SetName sets the "name" field.
+func (m *RoleMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *RoleMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *RoleMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[role.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *RoleMutation) NameCleared() bool {
+	_, ok := m.clearedFields[role.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *RoleMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, role.FieldName)
+}
+
+// SetGuardName sets the "guard_name" field.
+func (m *RoleMutation) SetGuardName(s string) {
+	m.guard_name = &s
+}
+
+// GuardName returns the value of the "guard_name" field in the mutation.
+func (m *RoleMutation) GuardName() (r string, exists bool) {
+	v := m.guard_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGuardName returns the old "guard_name" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldGuardName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGuardName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGuardName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGuardName: %w", err)
+	}
+	return oldValue.GuardName, nil
+}
+
+// ClearGuardName clears the value of the "guard_name" field.
+func (m *RoleMutation) ClearGuardName() {
+	m.guard_name = nil
+	m.clearedFields[role.FieldGuardName] = struct{}{}
+}
+
+// GuardNameCleared returns if the "guard_name" field was cleared in this mutation.
+func (m *RoleMutation) GuardNameCleared() bool {
+	_, ok := m.clearedFields[role.FieldGuardName]
+	return ok
+}
+
+// ResetGuardName resets all changes to the "guard_name" field.
+func (m *RoleMutation) ResetGuardName() {
+	m.guard_name = nil
+	delete(m.clearedFields, role.FieldGuardName)
+}
+
+// SetDescription sets the "description" field.
+func (m *RoleMutation) SetDescription(i int32) {
+	m.description = &i
+	m.adddescription = nil
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *RoleMutation) Description() (r int32, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldDescription(ctx context.Context) (v *int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// AddDescription adds i to the "description" field.
+func (m *RoleMutation) AddDescription(i int32) {
+	if m.adddescription != nil {
+		*m.adddescription += i
+	} else {
+		m.adddescription = &i
+	}
+}
+
+// AddedDescription returns the value that was added to the "description" field in this mutation.
+func (m *RoleMutation) AddedDescription() (r int32, exists bool) {
+	v := m.adddescription
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *RoleMutation) ClearDescription() {
+	m.description = nil
+	m.adddescription = nil
+	m.clearedFields[role.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *RoleMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[role.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *RoleMutation) ResetDescription() {
+	m.description = nil
+	m.adddescription = nil
+	delete(m.clearedFields, role.FieldDescription)
+}
+
+// Where appends a list predicates to the RoleMutation builder.
+func (m *RoleMutation) Where(ps ...predicate.Role) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RoleMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RoleMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Role, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RoleMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RoleMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Role).
+func (m *RoleMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RoleMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.create_time != nil {
+		fields = append(fields, role.FieldCreateTime)
+	}
+	if m.update_time != nil {
+		fields = append(fields, role.FieldUpdateTime)
+	}
+	if m.delete_time != nil {
+		fields = append(fields, role.FieldDeleteTime)
+	}
+	if m.name != nil {
+		fields = append(fields, role.FieldName)
+	}
+	if m.guard_name != nil {
+		fields = append(fields, role.FieldGuardName)
+	}
+	if m.description != nil {
+		fields = append(fields, role.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RoleMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case role.FieldCreateTime:
+		return m.CreateTime()
+	case role.FieldUpdateTime:
+		return m.UpdateTime()
+	case role.FieldDeleteTime:
+		return m.DeleteTime()
+	case role.FieldName:
+		return m.Name()
+	case role.FieldGuardName:
+		return m.GuardName()
+	case role.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case role.FieldCreateTime:
+		return m.OldCreateTime(ctx)
+	case role.FieldUpdateTime:
+		return m.OldUpdateTime(ctx)
+	case role.FieldDeleteTime:
+		return m.OldDeleteTime(ctx)
+	case role.FieldName:
+		return m.OldName(ctx)
+	case role.FieldGuardName:
+		return m.OldGuardName(ctx)
+	case role.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown Role field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RoleMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case role.FieldCreateTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreateTime(v)
+		return nil
+	case role.FieldUpdateTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdateTime(v)
+		return nil
+	case role.FieldDeleteTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleteTime(v)
+		return nil
+	case role.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case role.FieldGuardName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGuardName(v)
+		return nil
+	case role.FieldDescription:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Role field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RoleMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreate_time != nil {
+		fields = append(fields, role.FieldCreateTime)
+	}
+	if m.addupdate_time != nil {
+		fields = append(fields, role.FieldUpdateTime)
+	}
+	if m.adddelete_time != nil {
+		fields = append(fields, role.FieldDeleteTime)
+	}
+	if m.adddescription != nil {
+		fields = append(fields, role.FieldDescription)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RoleMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case role.FieldCreateTime:
+		return m.AddedCreateTime()
+	case role.FieldUpdateTime:
+		return m.AddedUpdateTime()
+	case role.FieldDeleteTime:
+		return m.AddedDeleteTime()
+	case role.FieldDescription:
+		return m.AddedDescription()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RoleMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case role.FieldCreateTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreateTime(v)
+		return nil
+	case role.FieldUpdateTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdateTime(v)
+		return nil
+	case role.FieldDeleteTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeleteTime(v)
+		return nil
+	case role.FieldDescription:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Role numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RoleMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(role.FieldCreateTime) {
+		fields = append(fields, role.FieldCreateTime)
+	}
+	if m.FieldCleared(role.FieldUpdateTime) {
+		fields = append(fields, role.FieldUpdateTime)
+	}
+	if m.FieldCleared(role.FieldDeleteTime) {
+		fields = append(fields, role.FieldDeleteTime)
+	}
+	if m.FieldCleared(role.FieldName) {
+		fields = append(fields, role.FieldName)
+	}
+	if m.FieldCleared(role.FieldGuardName) {
+		fields = append(fields, role.FieldGuardName)
+	}
+	if m.FieldCleared(role.FieldDescription) {
+		fields = append(fields, role.FieldDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RoleMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RoleMutation) ClearField(name string) error {
+	switch name {
+	case role.FieldCreateTime:
+		m.ClearCreateTime()
+		return nil
+	case role.FieldUpdateTime:
+		m.ClearUpdateTime()
+		return nil
+	case role.FieldDeleteTime:
+		m.ClearDeleteTime()
+		return nil
+	case role.FieldName:
+		m.ClearName()
+		return nil
+	case role.FieldGuardName:
+		m.ClearGuardName()
+		return nil
+	case role.FieldDescription:
+		m.ClearDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown Role nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RoleMutation) ResetField(name string) error {
+	switch name {
+	case role.FieldCreateTime:
+		m.ResetCreateTime()
+		return nil
+	case role.FieldUpdateTime:
+		m.ResetUpdateTime()
+		return nil
+	case role.FieldDeleteTime:
+		m.ResetDeleteTime()
+		return nil
+	case role.FieldName:
+		m.ResetName()
+		return nil
+	case role.FieldGuardName:
+		m.ResetGuardName()
+		return nil
+	case role.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown Role field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RoleMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RoleMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RoleMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RoleMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RoleMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RoleMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RoleMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Role unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RoleMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Role edge %s", name)
+}
 
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {

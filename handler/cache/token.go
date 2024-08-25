@@ -32,7 +32,7 @@ func NewUserToken(
 	accessTokenKeyPrefix string,
 	refreshTokenKeyPrefix string,
 ) *UserToken {
-	l := log.NewHelper(log.With(logger, "module", "handler/user-token"))
+	l := log.NewHelper(log.With(logger, "module", "user-token/handler"))
 	return &UserToken{
 		log:                   l,
 		rdb:                   rdb,

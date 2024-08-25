@@ -16,7 +16,7 @@ import (
 
 // NewEntClient Create Ent ORM database client
 func NewEntClient(cfg *conf.Bootstrap, logger log.Logger) *entgo.Client[*ent.Client] {
-	l := log.NewHelper(log.With(logger, "module", "core/data/ent"))
+	l := log.NewHelper(log.With(logger, "module", "ent/data/core-service"))
 
 	drv, err := entgo.CreateDriver(
 		cfg.Data.Database.GetDriver(),

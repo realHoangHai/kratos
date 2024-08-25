@@ -9,6 +9,52 @@ import (
 )
 
 var (
+	// PermissionColumns holds the columns for the "permission" table.
+	PermissionColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
+		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "create time"},
+		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "update time"},
+		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "delete time"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "name"},
+		{Name: "guard_name", Type: field.TypeString, Nullable: true, Comment: "guard name"},
+		{Name: "description", Type: field.TypeInt32, Nullable: true, Comment: "description"},
+	}
+	// PermissionTable holds the schema information for the "permission" table.
+	PermissionTable = &schema.Table{
+		Name:       "permission",
+		Columns:    PermissionColumns,
+		PrimaryKey: []*schema.Column{PermissionColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "permission_id",
+				Unique:  false,
+				Columns: []*schema.Column{PermissionColumns[0]},
+			},
+		},
+	}
+	// RoleColumns holds the columns for the "role" table.
+	RoleColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
+		{Name: "create_time", Type: field.TypeInt64, Nullable: true, Comment: "create time"},
+		{Name: "update_time", Type: field.TypeInt64, Nullable: true, Comment: "update time"},
+		{Name: "delete_time", Type: field.TypeInt64, Nullable: true, Comment: "delete time"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "name"},
+		{Name: "guard_name", Type: field.TypeString, Nullable: true, Comment: "guard name"},
+		{Name: "description", Type: field.TypeInt32, Nullable: true, Comment: "description"},
+	}
+	// RoleTable holds the schema information for the "role" table.
+	RoleTable = &schema.Table{
+		Name:       "role",
+		Columns:    RoleColumns,
+		PrimaryKey: []*schema.Column{RoleColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "role_id",
+				Unique:  false,
+				Columns: []*schema.Column{RoleColumns[0]},
+			},
+		},
+	}
 	// UserColumns holds the columns for the "user" table.
 	UserColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id", SchemaType: map[string]string{"mysql": "int", "postgres": "serial"}},
@@ -42,11 +88,23 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		PermissionTable,
+		RoleTable,
 		UserTable,
 	}
 )
 
 func init() {
+	PermissionTable.Annotation = &entsql.Annotation{
+		Table:     "permission",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	RoleTable.Annotation = &entsql.Annotation{
+		Table:     "role",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	UserTable.Annotation = &entsql.Annotation{
 		Table:     "user",
 		Charset:   "utf8mb4",

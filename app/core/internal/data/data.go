@@ -23,6 +23,8 @@ var ProviderSet = wire.NewSet(
 	NewRedisClient,
 
 	NewUserRepo,
+	NewRoleRepo,
+	NewPermissionRepo,
 )
 
 // Data .
@@ -34,7 +36,7 @@ type Data struct {
 
 // NewData .
 func NewData(entClient *entgo.Client[*ent.Client], redisClient *redis.Client, logger log.Logger) (*Data, func(), error) {
-	l := log.NewHelper(log.With(logger, "module", "core/data"))
+	l := log.NewHelper(log.With(logger, "module", "data/core-service"))
 
 	d := &Data{
 		db:  entClient,

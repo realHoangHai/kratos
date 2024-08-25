@@ -21,7 +21,7 @@ type UserService struct {
 }
 
 func NewUserService(logger log.Logger, uc *data.UserRepo) *UserService {
-	l := log.NewHelper(log.With(logger, "module", "core/service/user"))
+	l := log.NewHelper(log.With(logger, "module", "user/service/core-service"))
 	return &UserService{
 		uc:  uc,
 		log: l,
