@@ -1,6 +1,8 @@
 # Project Template
 
-## Generate other auxiliary files by Makefile
+## 👇 Setup
+
+Generate other auxiliary files by Makefile
 ```
 # Download and update dependencies
 make init
